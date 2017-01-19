@@ -277,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View view) {
-        //TODO: open view to edit notes
         Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
         intent.putExtra(AppConstants.NOTE_INTENT_ACTION, AppConstants.NOTE_INTENT_UPDATE);
         Uri uri = NotesContract.Notes.buildNoteUri(String.valueOf(view.getTag()));

@@ -53,12 +53,13 @@ public class NoteDetailActivity extends AppCompatActivity {
 
         noteTitle = (EditText) findViewById(R.id.et_note_title);
         noteBody = (EditText) findViewById(R.id.et_note_body);
+        //TODO: MAKE LABELS AS LISTVIEW UNDER BODY. ALSO IN CARDVIEW
+        //TODO: ADD LABELS TABLE TO CONTROL LABEL SELECTIONS
         noteLabel = (EditText) findViewById(R.id.et_note_label);
         noteImage = (ImageView) findViewById(R.id.detail_image);
         mValues = new ContentValues();
+        //TODO: CONSIDER TO ADD MULTIPLE IMAGES
         noteImage.setVisibility(View.GONE);
-
-
 
         mIntentAction = getIntent().getStringExtra(AppConstants.NOTE_INTENT_ACTION);
         if(mIntentAction.equals(AppConstants.NOTE_INTENT_UPDATE)){

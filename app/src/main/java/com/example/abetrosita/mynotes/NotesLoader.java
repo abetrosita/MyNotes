@@ -63,13 +63,13 @@ public class NotesLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public Cursor loadInBackground() {
-/*        String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mStatus) + " AND (" +
+        /*
+        String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mStatus) + " AND (" +
                 NotesContract.Columns.TITLE + " LIKE '%" + mFilterText + "%' OR " +
-                NotesContract.Columns.BODY + " LIKE '%" + mFilterText + "%')";*/
-
+                NotesContract.Columns.BODY + " LIKE '%" + mFilterText + "%')";
+        */
+        //TODO: ADD SEARCH FUNCTION
         String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mStatus);
-        //TODO: FIX THIS
-        //mCursor = mContentResolver.query(NotesContract.URI_TABLE, null, selection, null, null);
         Log.d(LOG_TAG, "SELECTION: " + selection);
         mCursor = mContentResolver.query(NotesContract.URI_TABLE, null, selection, null, null);
         return mCursor;

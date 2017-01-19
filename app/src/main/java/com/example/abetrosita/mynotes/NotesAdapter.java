@@ -69,7 +69,6 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
         holder.noteLabel.setText(noteLabel);
         holder.noteDateCreate.setText(mCursor.getString(
                 mCursor.getColumnIndex(NotesContract.Columns.DATE_CREATED)));
-        //TODO: set image resource
         holder.itemView.setTag(mCursor.getString(
                 mCursor.getColumnIndex(BaseColumns._ID)));
         holder.noteCard.setTag(mCursor.getString(

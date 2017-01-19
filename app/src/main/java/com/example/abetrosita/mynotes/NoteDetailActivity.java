@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -74,7 +75,8 @@ public class NoteDetailActivity extends AppCompatActivity {
         }
 
         noteBody.requestFocusFromTouch();
-        noteBody.setSelection(noteBody.getText().length());;
+        noteBody.setSelection(noteBody.getText().length());
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
 
@@ -159,10 +161,9 @@ public class NoteDetailActivity extends AppCompatActivity {
         }
     }
 
-
     private String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                "yyyy-MM-dd HH:mm", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
     }

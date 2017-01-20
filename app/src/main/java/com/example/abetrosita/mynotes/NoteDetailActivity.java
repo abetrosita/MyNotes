@@ -2,7 +2,6 @@ package com.example.abetrosita.mynotes;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +18,10 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import static com.example.abetrosita.mynotes.MainActivity.mLoaderManager;
 
 /**
  * Created by AbetRosita on 1/14/2017.
@@ -27,15 +29,16 @@ import java.util.Locale;
 
 public class NoteDetailActivity extends AppCompatActivity {
 
+    NoteLabelRecyclerView mRecyclerViewLabel;
     EditText noteTitle;
     EditText noteBody;
     EditText noteLabel;
+    List<String> mLabels;
+    NoteLabelAdapter mLabelAdapter;
     ImageView noteImage;
     String mIntentAction;
-    String mFilePath;
     ContentValues mValues;
     String mImagePath;
-    Bitmap mBitmap;
     Note mNote;
 
     private static final int PICK_IMAGE = 1;
@@ -56,6 +59,20 @@ public class NoteDetailActivity extends AppCompatActivity {
         //TODO: MAKE LABELS AS LISTVIEW UNDER BODY. ALSO IN CARDVIEW
         //TODO: ADD LABELS TABLE TO CONTROL LABEL SELECTIONS
         noteLabel = (EditText) findViewById(R.id.et_note_label);
+
+
+
+        //LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        //mRecyclerViewLabel = (RecyclerView) findViewById(R.id.rv_labels);
+        //mRecyclerViewLabel.setLayoutManager(layoutManager);
+        //mRecyclerViewLabel.setHasFixedSize(false);
+
+
+        mLoaderManager = getSupportLoaderManager();
+        //mLabelAdapter = new NoteLabelAdapter(null);
+        //mRecyclerViewLabel.setAdapter(mLabelAdapter);
+
+
         noteImage = (ImageView) findViewById(R.id.detail_image);
         mValues = new ContentValues();
         //TODO: CONSIDER TO ADD MULTIPLE IMAGES
@@ -67,8 +84,14 @@ public class NoteDetailActivity extends AppCompatActivity {
             noteTitle.setText(mNote.getTitle());
             noteBody.setText(mNote.getBody());
             noteLabel.setText(mNote.getLabel());
+            mLabels = mNote.getLabelList();
+            //Log.d(LOG_TAG, "+++ LABELS FROM MNOTE: " + mLabels.get(0));
+            //mLabelAdapter.loadLabelData(mLabels);
+            mRecyclerViewLabel= new NoteLabelRecyclerView(mLabels, this);
+
+
             mImagePath = mNote.getImagePath();
-            Log.d(LOG_TAG, "+++ IMAGE PATH RETRIEVED: " + mImagePath);
+            //Log.d(LOG_TAG, "+++ IMAGE PATH RETRIEVED: " + mImagePath);
             if(mImagePath.length() > 0){
                 Picasso.with(getApplicationContext()).load(Uri.parse(mImagePath)).into(noteImage);
                 noteImage.setVisibility(View.VISIBLE);

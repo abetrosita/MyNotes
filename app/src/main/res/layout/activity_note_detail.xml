@@ -9,11 +9,11 @@
         android:id="@+id/sv_note_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/ti_note_label">
+        android:layout_above="@+id/rv_labels">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -52,8 +52,25 @@
                 app:srcCompat="@drawable/placeholder"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"/>
+
+
         </RelativeLayout>
     </ScrollView>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_labels"
+        android:layout_above="@+id/ti_note_label"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager">
+    </android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/ti_note_label"

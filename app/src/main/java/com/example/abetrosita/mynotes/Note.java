@@ -3,10 +3,14 @@ package com.example.abetrosita.mynotes;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static android.R.attr.type;
@@ -91,6 +95,15 @@ public class Note implements Serializable {
                 "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
+    }
+
+    public List<String> getLabelList(){
+        List<String> labels = new ArrayList<>(Arrays.asList(mLabel.split("#,#")));
+        return labels;
+    }
+
+    public void setLabel(List<String> labels){
+        mLabel = TextUtils.join("#,#", labels);
     }
 
     public int getId() {

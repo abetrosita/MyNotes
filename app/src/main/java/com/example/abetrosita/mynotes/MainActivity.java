@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(LOG_TAG, "+++ MAIN ACIVITY ON CREATE CALLED");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        //StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
 
         //TODO: Save preference to save state of status...
         mNoteStatusFilter = AppConstants.NOTE_STATUS_DEFAULT;

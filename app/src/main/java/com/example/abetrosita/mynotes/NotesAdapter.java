@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by AbetRosita on 1/14/2017.
  */
@@ -33,7 +37,6 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
     public NotesAdapter(Cursor cursor, NotesAdapterOnClickHandler clickHandler) {
         mCursor = cursor;
         mClickHandler = clickHandler;
-        //Log.d(LOG_TAG, "+++ NUMBER OF ITEMS IN DB IS " + String.valueOf(mCursor.getCount()));
     }
 
 
@@ -66,7 +69,6 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
                 mCursor.getColumnIndex(NotesContract.Columns.TITLE)));
         holder.noteBody.setText(mCursor.getString(
                 mCursor.getColumnIndex(NotesContract.Columns.BODY)));
-        holder.noteLabel.setText(noteLabel);
         holder.noteDateCreate.setText(mCursor.getString(
                 mCursor.getColumnIndex(NotesContract.Columns.DATE_CREATED)));
         holder.itemView.setTag(mCursor.getString(
@@ -75,10 +77,13 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
                 mCursor.getColumnIndex(BaseColumns._ID)));
 
         if(noteLabel.length() == 0) {
-            holder.noteLabel.setVisibility(View.GONE);
+            holder.mNoteLabelRecyclerView.setVisibility(View.GONE);
         } else {
-            holder.noteLabel.setVisibility(View.VISIBLE);
+            List<String> labels = new ArrayList<>(Arrays.asList(noteLabel.split("#,#")));
+            holder.mNoteLabelRecyclerView.setVisibility(View.VISIBLE);
+            holder.mNoteLabelRecyclerView.loadLabels(labels);
         }
+
         if(noteImagePath.length() == 0) {
             holder.noteImage.setVisibility(View.GONE);
         }else {
@@ -101,19 +106,20 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
         TextView noteDateCreate;
         ImageView noteImage;
         CardView noteCard;
-
+        NoteLabelRecyclerView mNoteLabelRecyclerView;
 
         public NoteViewHolder(View itemView) {
             super(itemView);
 
             noteTitle = (TextView) itemView.findViewById(R.id.rc_tv_note_title);
             noteBody = (TextView) itemView.findViewById(R.id.rc_tv_note_body);
-            noteLabel = (TextView) itemView.findViewById(R.id.rc_tv_note_label);
             noteDateCreate = (TextView) itemView.findViewById(R.id.rc_tv_note_date_edit);
             noteCard = (CardView) itemView.findViewById(R.id.cv_note);
             noteImage = (ImageView) itemView.findViewById(R.id.rc_iv_note_image);
             noteCard.setOnClickListener(this);
-
+            mNoteLabelRecyclerView = new NoteLabelRecyclerView(null, (RecyclerView) itemView.findViewById(R.id.cv_rv_labels), mContext);
+            mNoteLabelRecyclerView.setClickable(false);
+            mNoteLabelRecyclerView.setFocusable(false);
         }
 
 

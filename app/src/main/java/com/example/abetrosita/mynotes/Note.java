@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -98,7 +99,14 @@ public class Note implements Serializable {
     }
 
     public List<String> getLabelList(){
+        if(mLabel == null){
+            return null;
+        }
+        if(mLabel.length() == 0){
+            return null;
+        }
         List<String> labels = new ArrayList<>(Arrays.asList(mLabel.split("#,#")));
+        Log.d("NOTE GET", "NOTE LABEL IS: " + String.valueOf(labels.size()));
         return labels;
     }
 

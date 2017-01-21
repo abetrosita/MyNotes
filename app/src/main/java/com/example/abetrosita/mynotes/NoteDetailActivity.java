@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,19 +60,9 @@ public class NoteDetailActivity extends AppCompatActivity {
         //TODO: MAKE LABELS AS LISTVIEW UNDER BODY. ALSO IN CARDVIEW
         //TODO: ADD LABELS TABLE TO CONTROL LABEL SELECTIONS
         noteLabel = (EditText) findViewById(R.id.et_note_label);
-
-
-
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //mRecyclerViewLabel = (RecyclerView) findViewById(R.id.rv_labels);
-        //mRecyclerViewLabel.setLayoutManager(layoutManager);
-        //mRecyclerViewLabel.setHasFixedSize(false);
-
+        mRecyclerViewLabel= new NoteLabelRecyclerView(null, (RecyclerView) findViewById(R.id.rv_labels), this);
 
         mLoaderManager = getSupportLoaderManager();
-        //mLabelAdapter = new NoteLabelAdapter(null);
-        //mRecyclerViewLabel.setAdapter(mLabelAdapter);
-
 
         noteImage = (ImageView) findViewById(R.id.detail_image);
         mValues = new ContentValues();
@@ -85,10 +76,7 @@ public class NoteDetailActivity extends AppCompatActivity {
             noteBody.setText(mNote.getBody());
             noteLabel.setText(mNote.getLabel());
             mLabels = mNote.getLabelList();
-            //Log.d(LOG_TAG, "+++ LABELS FROM MNOTE: " + mLabels.get(0));
-            //mLabelAdapter.loadLabelData(mLabels);
-            mRecyclerViewLabel= new NoteLabelRecyclerView(mLabels, this);
-
+            mRecyclerViewLabel.loadLabels(mLabels);
 
             mImagePath = mNote.getImagePath();
             //Log.d(LOG_TAG, "+++ IMAGE PATH RETRIEVED: " + mImagePath);

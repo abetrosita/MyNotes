@@ -31,6 +31,7 @@ public class NoteLabelAdapter extends RecyclerView.Adapter<NoteLabelAdapter.Labe
 
         View view = layoutInflater.inflate(labelItemLayout, parent,
                 shouldAttachToParentImmediately);
+        //view.setClickable(true);
         NoteLabelAdapter.LabelViewHolder viewHolder = new NoteLabelAdapter.LabelViewHolder(view);
         return viewHolder;
     }
@@ -47,9 +48,7 @@ public class NoteLabelAdapter extends RecyclerView.Adapter<NoteLabelAdapter.Labe
     }
 
     public class LabelViewHolder extends RecyclerView.ViewHolder {
-
         TextView label;
-
         public LabelViewHolder(View itemView) {
             super(itemView);
             label = (TextView) itemView.findViewById(R.id.tv_note_label_item);

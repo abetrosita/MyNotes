@@ -1,7 +1,8 @@
 package com.example.abetrosita.mynotes;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 
 import java.util.List;
 
@@ -9,26 +10,35 @@ import java.util.List;
  * Created by AbetRosita on 1/20/2017.
  */
 
-public class NoteLabelRecyclerView{
+public class NoteLabelRecyclerView extends RecyclerView{
     List<String> mLabels;
-    Activity mView;
+    RecyclerView mView;
     NoteLabelAdapter mLabelAdapter;
-    RecyclerView mRecyclerView;
 
-    public NoteLabelRecyclerView(List<String> labels, Activity view) {
-        mLabels = labels;
+    public NoteLabelRecyclerView(List<String> labels, RecyclerView view, Context context) {
+        super(context);
         mView = view;
-        //Context context = getApplicationContext;
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_labels);
-        //mRecyclerViewLabel.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(false);
+        mLabels = labels;
+        mView.setHasFixedSize(false);
         mLabelAdapter = new NoteLabelAdapter(mLabels);
-        mRecyclerView.setAdapter(mLabelAdapter);
+        mView.setAdapter(mLabelAdapter);
+
+     }
+
+    public NoteLabelRecyclerView(Context context) {
+        super(context);
     }
 
-
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        return false;
+    }
     public void loadLabels(List<String> labels){
+        if(labels ==null) {
+            mView.setVisibility(GONE);
+        }else {
+            mView.setVisibility(VISIBLE);
+        }
         mLabelAdapter.loadLabelData(labels);
     }
 

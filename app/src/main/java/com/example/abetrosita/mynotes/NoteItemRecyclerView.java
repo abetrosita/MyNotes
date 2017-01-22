@@ -12,33 +12,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import static com.example.abetrosita.mynotes.MainActivity.LOADER_ID;
 
-/**
- * Created by AbetRosita on 1/21/2017.
- */
 
 public class NoteItemRecyclerView extends RecyclerView implements
         NotesAdapter.NotesAdapterOnClickHandler{
 
-    private RecyclerView mNoteList;
-    private TextView mAddNote;
-    private Toast mToast;
-    private Cursor mCursor;
-    private String mFilterText;
+    private static final String LOG_TAG = NoteItemRecyclerView.class.getSimpleName();
+    private LoaderManager mLoaderManager;
+    private LoaderManager.LoaderCallbacks mCallback;
+    private ContentResolver mContentResolver;
+    private Context mContext;
+    private static String mFilterText;
     private int mNoteStatusFilter;
-
-    private static Uri mUri;
-
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    public static LoaderManager mLoaderManager;
-    public static LoaderManager.LoaderCallbacks mCallback;
-    public static NotesAdapter mNotesAdapter;
-    public static ContentResolver mContentResolver;
-    public static Context mContext;
 
 
 
@@ -46,24 +33,16 @@ public class NoteItemRecyclerView extends RecyclerView implements
         super(context);
         mContext = context;
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-        mNoteList = (RecyclerView) findViewById(R.id.rv_notes);
-        mNoteList.setLayoutManager(layoutManager);
-        mNoteList.setHasFixedSize(false);
+        RecyclerView recyclerViewNotes = (RecyclerView) findViewById(R.id.rv_notes);
+        recyclerViewNotes.setLayoutManager(layoutManager);
+        recyclerViewNotes.setHasFixedSize(false);
         mCallback = loaderCallbacks;
         mFilterText = "";
 
         mContentResolver = mContext.getContentResolver();
-        mNotesAdapter = new NotesAdapter(null, this);
-        mNoteList.setAdapter(mNotesAdapter);
+        NotesAdapter notesAdapter = new NotesAdapter(null, this);
+        recyclerViewNotes.setAdapter(notesAdapter);
 
-        mAddNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, NoteDetailActivity.class);
-                intent.putExtra(AppConstants.NOTE_INTENT_ACTION, AppConstants.NOTE_INTENT_ADD);
-                mContext.startActivity(intent);
-            }
-        });
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -118,7 +97,7 @@ public class NoteItemRecyclerView extends RecyclerView implements
                         }).show();
 
             }
-        }).attachToRecyclerView(mNoteList);
+        }).attachToRecyclerView(recyclerViewNotes);
     }
 
     @Override

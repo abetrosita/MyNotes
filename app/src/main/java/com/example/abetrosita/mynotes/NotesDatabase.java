@@ -5,16 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
-/**
- * Created by AbetRosita on 1/14/2017.
- */
 
 public class NotesDatabase extends SQLiteOpenHelper {
 
         private static final String LOG_TAG = NotesDatabase.class.getSimpleName();
         private static final String DATABASE_NAME = "notes.db";
         private static final int DATABASE_VERSION = 2;
-        private final Context mContext;
 
         interface Tables {
             String NOTES = "notes";
@@ -22,7 +18,6 @@ public class NotesDatabase extends SQLiteOpenHelper {
 
         public NotesDatabase(Context context){
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            mContext = context;
         }
 
         @Override

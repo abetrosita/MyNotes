@@ -29,14 +29,11 @@ import static com.example.abetrosita.mynotes.AppConstants.LABEL_IS_CLICKABLE;
 
 public class NoteDetailActivity extends AppCompatActivity {
 
-    NoteLabelRecyclerView mRecyclerViewLabel;
-    FlowLayout mNoteLabels;
-    EditText noteTitle;
-    EditText noteBody;
-    //EditText noteLabel;
+    FlowLayout mFlowLayoutLabel;
+    EditText mEditTextTitle;
+    EditText mEditTextBody;
     List<String> mLabels;
-    NoteLabelAdapter mLabelAdapter;
-    ImageView noteImage;
+    ImageView mImageView;
     String mIntentAction;
     ContentValues mValues;
     String mImagePath;
@@ -55,35 +52,35 @@ public class NoteDetailActivity extends AppCompatActivity {
 
         mImagePath = "";
 
-        mNoteLabels = (FlowLayout) findViewById(R.id.ll_note_labels);
-        mNoteLabels.removeAllViews();
-        noteTitle = (EditText) findViewById(R.id.et_note_title);
-        noteBody = (EditText) findViewById(R.id.et_note_body);
+        mFlowLayoutLabel = (FlowLayout) findViewById(R.id.ll_note_labels);
+        mFlowLayoutLabel.removeAllViews();
+        mEditTextTitle = (EditText) findViewById(R.id.et_note_title);
+        mEditTextBody = (EditText) findViewById(R.id.et_note_body);
         //TODO: ADD LABELS TABLE TO CONTROL LABEL SELECTIONS
-        //noteLabel = (EditText) findViewById(R.id.et_note_label);
+        //mTextViewLabel = (EditText) findViewById(R.id.et_note_label);
 
-        noteImage = (ImageView) findViewById(R.id.detail_image);
+        mImageView = (ImageView) findViewById(R.id.detail_image);
         mValues = new ContentValues();
         //TODO: CONSIDER TO ADD MULTIPLE IMAGES
-        noteImage.setVisibility(View.GONE);
+        mImageView.setVisibility(View.GONE);
 
         mIntentAction = getIntent().getStringExtra(AppConstants.NOTE_INTENT_ACTION);
         if(mIntentAction.equals(AppConstants.NOTE_INTENT_UPDATE)){
             mNote = (Note) getIntent().getSerializableExtra(AppConstants.NOTE_INTENT_OBJECT);
-            noteTitle.setText(mNote.getTitle());
-            noteBody.setText(mNote.getBody());
-            //noteLabel.setText(mNote.getLabel());
+            mEditTextTitle.setText(mNote.getTitle());
+            mEditTextBody.setText(mNote.getBody());
+            //mTextViewLabel.setText(mNote.getLabel());
             mLabels = mNote.getLabelList();
-            mNoteLabels.addView(new NoteLabelListLayout(this, mLabels, LABEL_IS_CLICKABLE));
+            mFlowLayoutLabel.addView(new NoteLabelListLayout(this, mLabels, LABEL_IS_CLICKABLE));
             mImagePath = mNote.getImagePath();
             if(mImagePath.length() > 0){
-                Picasso.with(getApplicationContext()).load(Uri.parse(mImagePath)).into(noteImage);
-                noteImage.setVisibility(View.VISIBLE);
+                Picasso.with(getApplicationContext()).load(Uri.parse(mImagePath)).into(mImageView);
+                mImageView.setVisibility(View.VISIBLE);
             }
         }
 
-        noteBody.requestFocusFromTouch();
-        noteBody.setSelection(noteBody.getText().length());
+        mEditTextBody.requestFocusFromTouch();
+        mEditTextBody.setSelection(mEditTextBody.getText().length());
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
@@ -91,9 +88,9 @@ public class NoteDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        String title = noteTitle.getText().toString();
-        String body = noteBody.getText().toString();
-        //String label = noteLabel.getText().toString();
+        String title = mEditTextTitle.getText().toString();
+        String body = mEditTextBody.getText().toString();
+        //String label = mTextViewLabel.getText().toString();
         String imagePath = AppConstants.NOTE_NO_IMAGE;
 
         if(title.length() + body.length() == 0) {
@@ -163,8 +160,8 @@ public class NoteDetailActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     Uri selectedImage = imageReturnedIntent.getData();
                     mImagePath = selectedImage.toString();
-                    noteImage.setVisibility(View.VISIBLE);
-                    Picasso.with(getApplicationContext()).load(selectedImage).into(noteImage);
+                    mImageView.setVisibility(View.VISIBLE);
+                    Picasso.with(getApplicationContext()).load(selectedImage).into(mImageView);
                }
         }
     }

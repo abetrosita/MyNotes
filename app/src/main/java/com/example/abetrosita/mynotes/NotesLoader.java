@@ -10,9 +10,6 @@ import android.util.Log;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
-/**
- * Created by AbetRosita on 1/14/2017.
- */
 
 public class NotesLoader extends AsyncTaskLoader<Cursor> {
     private static final String LOG_TAG = NotesLoader.class.getSimpleName();
@@ -63,14 +60,8 @@ public class NotesLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public Cursor loadInBackground() {
-        /*
-        String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mStatus) + " AND (" +
-                NotesContract.Columns.TITLE + " LIKE '%" + mFilterText + "%' OR " +
-                NotesContract.Columns.BODY + " LIKE '%" + mFilterText + "%')";
-        */
         //TODO: ADD SEARCH FUNCTION
         String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mStatus);
-        Log.d(LOG_TAG, "SELECTION: " + selection);
         mCursor = mContentResolver.query(NotesContract.URI_TABLE, null, selection, null, null);
         return mCursor;
     }
@@ -79,7 +70,6 @@ public class NotesLoader extends AsyncTaskLoader<Cursor> {
     public void deliverResult(Cursor cursor) {
 
         if(isReset()){
-            Log.d(LOG_TAG, "+++++ Data came while loader is reset.");
             if(cursor != null){
                 mCursor.close();
                 return;
@@ -93,12 +83,10 @@ public class NotesLoader extends AsyncTaskLoader<Cursor> {
         }
 
         if(isStarted()) {
-            Log.d(LOG_TAG, "+++ Delivering results to the LoaderManager.");
             super.deliverResult(cursor);
         }
 
         if(oldCursor != null && oldCursor != cursor) {
-            Log.d(LOG_TAG, "+++++ Releasing any old data associated with this Loader.");
             oldCursor.close();
         }
 
@@ -116,7 +104,6 @@ public class NotesLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     protected void onReset() {
-        Log.d(LOG_TAG, "+++++ On reset called.");
         onStopLoading();
         if(mCursor != null){
             mCursor.close();

@@ -3,32 +3,24 @@ package com.example.abetrosita.mynotes;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by AbetRosita on 1/21/2017.
- */
 
 public class NoteLabelListLayout extends FlowLayout {
     private Context mContext;
     private List<String> mLabels;
-    private FlowLayout mLabelLayout;
-    private List<EditText> mTextBoxes = new ArrayList<>();
     private LayoutInflater mInflater;
 
     public NoteLabelListLayout(Context context, List<String> labels) {
         super(context);
-        //if(labels == null) return;
+
         mContext = context;
         mLabels = labels;
         mInflater = LayoutInflater.from(mContext);
-        //ViewGroup.LayoutParams(10, 10);
+
         removeAllViews();
         loadListItems();
 
@@ -47,18 +39,16 @@ public class NoteLabelListLayout extends FlowLayout {
 
     public void loadListItems(){
         View mContainer;
-        ImageView imageLabel = new ImageView(mContext);
-        imageLabel.setImageResource(R.drawable.ic_note_label);
-        addView(imageLabel);
+        ImageView imageLabelIcon = new ImageView(mContext);
+        imageLabelIcon.setImageResource(R.drawable.ic_note_label);
+        addView(imageLabelIcon);
 
-        //Log.d("FLOW_LAYOUT", "LABEL COUNT" + String.valueOf(mLabels.size()));
         if(mLabels == null){
-            TextView addLabel = new TextView(mContext);
-            addLabel.setText("Add a note label...");
-            addView(addLabel);
+            TextView addLabelTextView = new TextView(mContext);
+            addLabelTextView.setText(R.string.add_label_text);
+            addView(addLabelTextView);
             return;
         }
-
 
         for(String label : mLabels) {
             mContainer = mInflater.inflate(R.layout.note_label_item, null, false);

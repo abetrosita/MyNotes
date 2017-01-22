@@ -9,9 +9,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-/**
- * Created by AbetRosita on 1/20/2017.
- */
 
 public class NoteLabelAdapter extends RecyclerView.Adapter<NoteLabelAdapter.LabelViewHolder> {
 
@@ -24,16 +21,15 @@ public class NoteLabelAdapter extends RecyclerView.Adapter<NoteLabelAdapter.Labe
 
     @Override
     public LabelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         Context context = parent.getContext();
-        int labelItemLayout = R.layout.note_label_item;
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
-        View view = layoutInflater.inflate(labelItemLayout, parent,
+        View view = layoutInflater.inflate(R.layout.note_label_item, parent,
                 shouldAttachToParentImmediately);
-        //view.setClickable(true);
-        NoteLabelAdapter.LabelViewHolder viewHolder = new NoteLabelAdapter.LabelViewHolder(view);
-        return viewHolder;
+
+        return new NoteLabelAdapter.LabelViewHolder(view);
     }
 
     @Override

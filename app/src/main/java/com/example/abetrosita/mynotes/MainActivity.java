@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements
         NotesAdapter.NotesAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<Cursor>{
 
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private RecyclerView mNoteList;
     private TextView mAddNote;
     private Toast mToast;
@@ -42,11 +43,8 @@ public class MainActivity extends AppCompatActivity implements
     private String mFilterText;
     private int mNoteStatusFilter;
 
-    private static Uri mUri;
 
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     public static final int LOADER_ID = 1;
-
     public static LoaderManager mLoaderManager;
     public static LoaderManager.LoaderCallbacks mCallback;
     public static NotesAdapter mNotesAdapter;
@@ -61,10 +59,7 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Log.d(LOG_TAG, "+++ MAIN ACIVITY ON CREATE CALLED");
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
 
         //TODO: Save preference to save state of status...
         mNoteStatusFilter = AppConstants.NOTE_STATUS_DEFAULT;
@@ -95,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements
            @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 //do nothing, we only care about swiping
-               showToast("MOVED");
                 return true;
             }
             @Override
@@ -146,17 +140,6 @@ public class MainActivity extends AppCompatActivity implements
            }
         }).attachToRecyclerView(mNoteList);
 
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
-
         final int REQUEST_CODE_ASK_PERMISSIONS = 555;
         int hasReadContactsPermission =
                 ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -176,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -186,8 +169,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
-
+        //Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
         mLoaderManager.restartLoader(LOADER_ID, null, this);
 
     }
@@ -204,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }

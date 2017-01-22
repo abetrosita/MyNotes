@@ -17,9 +17,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 
-/**
- * Created by AbetRosita on 1/14/2017.
- */
 
 public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder>{
 
@@ -41,21 +38,17 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
 
     @Override
     public NoteViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
         mContext = viewGroup.getContext();
-        int noteListItemLayout = R.layout.note_list_item;
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-        boolean shouldAttachToParentImmediately = false;
 
-        View view = layoutInflater.inflate(noteListItemLayout, viewGroup,
-                shouldAttachToParentImmediately);
-        NoteViewHolder viewHolder = new NoteViewHolder(view);
-
-        return viewHolder;
+        View view = layoutInflater.inflate(R.layout.note_list_item, viewGroup, false);
+        return new NoteViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(NoteViewHolder holder, int position) {
-        //Log.d(LOG_TAG, "+++ BIND ENTERED");
+
         if (mCursor.isClosed() || mCursor ==null) return;
         if(!mCursor.moveToPosition(position)) return;
 
@@ -64,30 +57,30 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
         String noteImagePath = mCursor.getString(
                 mCursor.getColumnIndex(NotesContract.Columns.IMAGE_PATH));
 
-        holder.noteTitle.setText(mCursor.getString(
+        holder.mTextViewTitle.setText(mCursor.getString(
                 mCursor.getColumnIndex(NotesContract.Columns.TITLE)));
-        holder.noteBody.setText(mCursor.getString(
+        holder.mTextViewBody.setText(mCursor.getString(
                 mCursor.getColumnIndex(NotesContract.Columns.BODY)));
-        holder.noteDateCreate.setText(mCursor.getString(
+        holder.mTextViewDateCreate.setText(mCursor.getString(
                 mCursor.getColumnIndex(NotesContract.Columns.DATE_CREATED)));
         holder.itemView.setTag(mCursor.getString(
                 mCursor.getColumnIndex(BaseColumns._ID)));
-        holder.noteCard.setTag(mCursor.getString(
+        holder.mNoteCardView.setTag(mCursor.getString(
                 mCursor.getColumnIndex(BaseColumns._ID)));
 
-        holder.mNoteLabels.removeAllViews();
+        holder.mFlowLayoutLabel.removeAllViews();
         if(noteLabel.length() == 0) {
-            holder.noteLabelLayout.setVisibility(View.GONE);
+            holder.mLinearLayoutLabel.setVisibility(View.GONE);
         } else {
-            holder.noteLabelLayout.setVisibility(View.VISIBLE);
-            holder.mNoteLabels.addView(new NoteLabelListLayout(mContext, Arrays.asList(noteLabel.split("#,#"))));
+            holder.mLinearLayoutLabel.setVisibility(View.VISIBLE);
+            holder.mFlowLayoutLabel.addView(new NoteLabelListLayout(mContext, Arrays.asList(noteLabel.split("#,#"))));
         }
 
         if(noteImagePath.length() == 0) {
-            holder.noteImage.setVisibility(View.GONE);
+            holder.mImageView.setVisibility(View.GONE);
         }else {
-            holder.noteImage.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(Uri.parse(noteImagePath)).into(holder.noteImage);
+            holder.mImageView.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(Uri.parse(noteImagePath)).into(holder.mImageView);
         }
 
     }
@@ -99,26 +92,25 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
     }
 
     class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView noteTitle;
-        TextView noteBody;
-        TextView noteLabel;
-        TextView noteDateCreate;
-        ImageView noteImage;
-        CardView noteCard;
-        LinearLayout noteLabelLayout;
-        FlowLayout mNoteLabels;
+        TextView mTextViewTitle;
+        TextView mTextViewBody;
+        TextView mTextViewDateCreate;
+        ImageView mImageView;
+        CardView mNoteCardView;
+        LinearLayout mLinearLayoutLabel;
+        FlowLayout mFlowLayoutLabel;
 
          public NoteViewHolder(View itemView) {
              super(itemView);
 
-             noteTitle = (TextView) itemView.findViewById(R.id.rc_tv_note_title);
-             noteBody = (TextView) itemView.findViewById(R.id.rc_tv_note_body);
-             noteDateCreate = (TextView) itemView.findViewById(R.id.rc_tv_note_date_edit);
-             noteCard = (CardView) itemView.findViewById(R.id.cv_note);
-             noteImage = (ImageView) itemView.findViewById(R.id.rc_iv_note_image);
-             noteCard.setOnClickListener(this);
-             mNoteLabels = (FlowLayout) itemView.findViewById(R.id.fl_item_labels);
-             noteLabelLayout = (LinearLayout) itemView.findViewById(R.id.ll_note_label);
+             mTextViewTitle = (TextView) itemView.findViewById(R.id.rc_tv_note_title);
+             mTextViewBody = (TextView) itemView.findViewById(R.id.rc_tv_note_body);
+             mTextViewDateCreate = (TextView) itemView.findViewById(R.id.rc_tv_note_date_edit);
+             mNoteCardView = (CardView) itemView.findViewById(R.id.cv_note);
+             mImageView = (ImageView) itemView.findViewById(R.id.rc_iv_note_image);
+             mNoteCardView.setOnClickListener(this);
+             mFlowLayoutLabel = (FlowLayout) itemView.findViewById(R.id.fl_item_labels);
+             mLinearLayoutLabel = (LinearLayout) itemView.findViewById(R.id.ll_note_label);
          }
 
 

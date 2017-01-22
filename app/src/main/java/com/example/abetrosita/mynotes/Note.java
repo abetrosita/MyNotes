@@ -15,9 +15,6 @@ import java.util.Locale;
 
 import static android.R.attr.type;
 
-/**
- * Created by AbetRosita on 1/15/2017.
- */
 
 public class Note implements Serializable {
     private int mId;
@@ -108,9 +105,7 @@ public class Note implements Serializable {
         if(mLabel.length() == 0){
             return null;
         }
-        List<String> labels = new ArrayList<>(Arrays.asList(mLabel.split("#,#")));
-        //Log.d("NOTE GET", "NOTE LABEL IS: " + String.valueOf(labels.size()));
-        return labels;
+        return new ArrayList<>(Arrays.asList(mLabel.split("#,#")));
     }
 
     public void setLabel(List<String> labels){

@@ -8,15 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import static android.content.ContentValues.TAG;
 
-/**
- * Created by AbetRosita on 1/14/2017.
- */
+
 
 public class NotesProvider  extends ContentProvider {
     private NotesDatabase mOpenHelper;
@@ -56,7 +55,7 @@ public class NotesProvider  extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         final int match = sUriMatcher.match(uri);
         final String lastPath = uri.getLastPathSegment();
@@ -83,19 +82,12 @@ public class NotesProvider  extends ContentProvider {
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
 
-
-
-        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
-
-        Log.d(LOG_TAG, "MATCHER VALUE: " + String.valueOf(match));
-        Log.d(LOG_TAG, "NUMBER OF ITEMS QUERIED: " + String.valueOf(cursor.getCount()));
-
-        return cursor;
+        return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     @Nullable
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case NOTES:
@@ -107,7 +99,7 @@ public class NotesProvider  extends ContentProvider {
 
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         Log.v(TAG, "insert(uri=" + uri + " values=" + values.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
@@ -127,8 +119,7 @@ public class NotesProvider  extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-//        Log.v(TAG, "delete(uri=" + uri);
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         int numRowsDeleted = 0;
         if(uri.equals(NotesContract.URI_TABLE)){
             deleteDatabase();
@@ -145,7 +136,6 @@ public class NotesProvider  extends ContentProvider {
                 numRowsDeleted = db.delete(NotesDatabase.Tables.NOTES, selectionCriteria, selectionArgs);
                 if (numRowsDeleted != 0) {
                     getContext().getContentResolver().notifyChange(NotesContract.URI_TABLE, null);
-//                    Log.v(TAG, "++++ DELETED " + String.valueOf(numRowsDeleted));
                 }
                 return numRowsDeleted;
             default:
@@ -154,7 +144,7 @@ public class NotesProvider  extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         Log.v(TAG, "update(uri=" + uri + " values=" + values.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
@@ -175,11 +165,6 @@ public class NotesProvider  extends ContentProvider {
         }
 
         numRowsUpdated = db.update(NotesDatabase.Tables.NOTES, values, selectionCriteria, selectionArgs);
-        Log.d(LOG_TAG, "+++ ROWS UPATED: " + values.toString());
-        Log.d(LOG_TAG, "+++ ROWS UPATED: " + String.valueOf(numRowsUpdated));
-        /*if (numRowsUpdated > 0) {
-            getContext().getContentResolver().notifyChange(FriendsContract.Friends.CONTENT_URI, null);
-        }*/
         return numRowsUpdated;
 
     }

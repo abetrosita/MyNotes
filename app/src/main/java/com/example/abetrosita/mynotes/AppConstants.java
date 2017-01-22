@@ -38,5 +38,6 @@ public class AppConstants {
 
 
     public static final String INTENT_EXTRA_ID = "note_id";
+    public static final boolean LABEL_IS_CLICKABLE = true;
 
 }

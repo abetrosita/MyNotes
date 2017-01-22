@@ -9,7 +9,7 @@
         android:id="@+id/sv_note_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/rv_labels">
+        android:layout_above="@+id/ll_note_labels">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,6 +57,19 @@
         </RelativeLayout>
     </ScrollView>
 
+    <com.example.abetrosita.mynotes.FlowLayout
+        android:id="@+id/ll_note_labels"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+    </com.example.abetrosita.mynotes.FlowLayout>
+
+<!--
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_labels"
@@ -71,6 +84,7 @@
         android:orientation="horizontal"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager">
     </android.support.v7.widget.RecyclerView>
+
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/ti_note_label"
@@ -90,5 +104,5 @@
             android:hint="Note Label"/>
          
     </android.support.design.widget.TextInputLayout>
-
+-->
 </RelativeLayout>

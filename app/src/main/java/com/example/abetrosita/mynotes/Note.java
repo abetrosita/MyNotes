@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -49,13 +48,17 @@ public class Note implements Serializable {
     }
 
     public Note(String title, String body, String label, String imagePath) {
+        this(title, body, imagePath);
+        mLabel = label;
+    }
+
+    public Note(String title, String body, String imagePath) {
         mType = type;
         mStatus = AppConstants.NOTE_STATUS_DEFAULT;
         mTitle = title;
         mBody = body;
         mImagePath = imagePath;
         mImageLocation = AppConstants.NOTE_IMAGE_LOCATION_DEFAULT;
-        mLabel = label;
         mDateModified = getDateTime();
         mDateCreated = mDateModified;
     }
@@ -106,7 +109,7 @@ public class Note implements Serializable {
             return null;
         }
         List<String> labels = new ArrayList<>(Arrays.asList(mLabel.split("#,#")));
-        Log.d("NOTE GET", "NOTE LABEL IS: " + String.valueOf(labels.size()));
+        //Log.d("NOTE GET", "NOTE LABEL IS: " + String.valueOf(labels.size()));
         return labels;
     }
 

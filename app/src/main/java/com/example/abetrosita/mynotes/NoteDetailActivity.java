@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.example.abetrosita.mynotes.MainActivity.mLoaderManager;
+import static com.example.abetrosita.mynotes.AppConstants.LABEL_IS_CLICKABLE;
 
 /**
  * Created by AbetRosita on 1/14/2017.
@@ -31,9 +30,10 @@ import static com.example.abetrosita.mynotes.MainActivity.mLoaderManager;
 public class NoteDetailActivity extends AppCompatActivity {
 
     NoteLabelRecyclerView mRecyclerViewLabel;
+    FlowLayout mNoteLabels;
     EditText noteTitle;
     EditText noteBody;
-    EditText noteLabel;
+    //EditText noteLabel;
     List<String> mLabels;
     NoteLabelAdapter mLabelAdapter;
     ImageView noteImage;
@@ -55,14 +55,12 @@ public class NoteDetailActivity extends AppCompatActivity {
 
         mImagePath = "";
 
+        mNoteLabels = (FlowLayout) findViewById(R.id.ll_note_labels);
+        mNoteLabels.removeAllViews();
         noteTitle = (EditText) findViewById(R.id.et_note_title);
         noteBody = (EditText) findViewById(R.id.et_note_body);
-        //TODO: MAKE LABELS AS LISTVIEW UNDER BODY. ALSO IN CARDVIEW
         //TODO: ADD LABELS TABLE TO CONTROL LABEL SELECTIONS
-        noteLabel = (EditText) findViewById(R.id.et_note_label);
-        mRecyclerViewLabel= new NoteLabelRecyclerView(null, (RecyclerView) findViewById(R.id.rv_labels), this);
-
-        mLoaderManager = getSupportLoaderManager();
+        //noteLabel = (EditText) findViewById(R.id.et_note_label);
 
         noteImage = (ImageView) findViewById(R.id.detail_image);
         mValues = new ContentValues();
@@ -74,12 +72,10 @@ public class NoteDetailActivity extends AppCompatActivity {
             mNote = (Note) getIntent().getSerializableExtra(AppConstants.NOTE_INTENT_OBJECT);
             noteTitle.setText(mNote.getTitle());
             noteBody.setText(mNote.getBody());
-            noteLabel.setText(mNote.getLabel());
+            //noteLabel.setText(mNote.getLabel());
             mLabels = mNote.getLabelList();
-            mRecyclerViewLabel.loadLabels(mLabels);
-
+            mNoteLabels.addView(new NoteLabelListLayout(this, mLabels, LABEL_IS_CLICKABLE));
             mImagePath = mNote.getImagePath();
-            //Log.d(LOG_TAG, "+++ IMAGE PATH RETRIEVED: " + mImagePath);
             if(mImagePath.length() > 0){
                 Picasso.with(getApplicationContext()).load(Uri.parse(mImagePath)).into(noteImage);
                 noteImage.setVisibility(View.VISIBLE);
@@ -97,7 +93,7 @@ public class NoteDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         String title = noteTitle.getText().toString();
         String body = noteBody.getText().toString();
-        String label = noteLabel.getText().toString();
+        //String label = noteLabel.getText().toString();
         String imagePath = AppConstants.NOTE_NO_IMAGE;
 
         if(title.length() + body.length() == 0) {
@@ -108,7 +104,7 @@ public class NoteDetailActivity extends AppCompatActivity {
 
         switch (mIntentAction){
             case AppConstants.NOTE_INTENT_ADD:
-                Note note = new Note(title, body, label, imagePath);
+                Note note = new Note(title, body, imagePath);
                 mValues = note.getContentValues();
                 mValues.put(NotesContract.Columns.IMAGE_PATH, mImagePath);
                 MainActivity.mContentResolver.insert(NotesContract.URI_TABLE, mValues);
@@ -116,7 +112,7 @@ public class NoteDetailActivity extends AppCompatActivity {
             case AppConstants.NOTE_INTENT_UPDATE:
                 mNote.setTitle(title);
                 mNote.setBody(body);
-                mNote.setLabel(label);
+                //mNote.setLabel(label);
                 mNote.setDateModified(getDateTime());
                 mValues = mNote.getContentValues();
                 mValues.put(NotesContract.Columns.IMAGE_PATH, mImagePath);

@@ -9,12 +9,12 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class NoteLabelListLayout extends FlowLayout {
+public class LabelListLayout extends FlowLayout {
     private Context mContext;
     private List<String> mLabels;
     private LayoutInflater mInflater;
 
-    public NoteLabelListLayout(Context context, List<String> labels) {
+    public LabelListLayout(Context context, List<String> labels) {
         super(context);
 
         mContext = context;
@@ -26,7 +26,7 @@ public class NoteLabelListLayout extends FlowLayout {
 
     }
 
-    public NoteLabelListLayout(Context context, List<String> labels, boolean labelClickable) {
+    public LabelListLayout(Context context, List<String> labels, boolean labelClickable) {
         this(context, labels);
         setOnClickListener(new OnClickListener() {
             @Override
@@ -49,7 +49,6 @@ public class NoteLabelListLayout extends FlowLayout {
             addView(addLabelTextView);
             return;
         }
-
         for(String label : mLabels) {
             mContainer = mInflater.inflate(R.layout.note_label_item, null, false);
             final TextView mTextView = (TextView) mContainer.findViewById(R.id.tv_note_label_item);

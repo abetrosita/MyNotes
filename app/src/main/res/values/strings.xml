@@ -7,4 +7,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_add_image_title">Add image</string>
     <string name="add_label_text">Add a note label…</string>
+    <string name="menu_main_label">Labels</string>
+    <string name="label_dialog_ok">OK</string>
+    <string name="label_dialog_cancel">CANCEL</string>
+    <string name="note_dialog_add_label">Add label...</string>
 </resources>

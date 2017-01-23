@@ -71,7 +71,7 @@ public class NoteDetailActivity extends AppCompatActivity {
             mEditTextBody.setText(mNote.getBody());
             //mTextViewLabel.setText(mNote.getLabel());
             mLabels = mNote.getLabelList();
-            mFlowLayoutLabel.addView(new NoteLabelListLayout(this, mLabels, LABEL_IS_CLICKABLE));
+            mFlowLayoutLabel.addView(new LabelListLayout(this, mLabels, LABEL_IS_CLICKABLE));
             mImagePath = mNote.getImagePath();
             if(mImagePath.length() > 0){
                 Picasso.with(getApplicationContext()).load(Uri.parse(mImagePath)).into(mImageView);

@@ -73,7 +73,7 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
             holder.mLinearLayoutLabel.setVisibility(View.GONE);
         } else {
             holder.mLinearLayoutLabel.setVisibility(View.VISIBLE);
-            holder.mFlowLayoutLabel.addView(new NoteLabelListLayout(mContext, Arrays.asList(noteLabel.split("#,#"))));
+            holder.mFlowLayoutLabel.addView(new LabelListLayout(mContext, Arrays.asList(noteLabel.split("#,#"))));
         }
 
         if(noteImagePath.length() == 0) {

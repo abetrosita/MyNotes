@@ -10,12 +10,12 @@ import android.widget.TextView;
 import java.util.List;
 
 
-public class NoteLabelAdapter extends RecyclerView.Adapter<NoteLabelAdapter.LabelViewHolder> {
+public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHolder> {
 
-    private static final String LOG_TAG = NoteLabelAdapter.class.getSimpleName();
+    private static final String LOG_TAG = LabelAdapter.class.getSimpleName();
     private List<String> mLabels;
 
-    public NoteLabelAdapter(List<String> labels) {
+    public LabelAdapter(List<String> labels) {
         mLabels = labels;
     }
 
@@ -26,10 +26,10 @@ public class NoteLabelAdapter extends RecyclerView.Adapter<NoteLabelAdapter.Labe
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
-        View view = layoutInflater.inflate(R.layout.note_label_item, parent,
+        View view = layoutInflater.inflate(R.layout.note_label_dialog_item, parent,
                 shouldAttachToParentImmediately);
 
-        return new NoteLabelAdapter.LabelViewHolder(view);
+        return new LabelAdapter.LabelViewHolder(view);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class NoteLabelAdapter extends RecyclerView.Adapter<NoteLabelAdapter.Labe
         TextView label;
         public LabelViewHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.tv_note_label_item);
+            label = (TextView) itemView.findViewById(R.id.tv_note_label);
         }
     }
 

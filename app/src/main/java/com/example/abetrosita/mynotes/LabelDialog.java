@@ -2,6 +2,10 @@ package com.example.abetrosita.mynotes;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +23,8 @@ import java.util.List;
  * Created by AbetRosita on 1/14/2017.
  */
 
-public class LabelDialog extends AppCompatActivity {
+public class LabelDialog extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private int mDialogAction;
     private Context mContext;
@@ -126,4 +131,18 @@ public class LabelDialog extends AppCompatActivity {
         mLabels.add("Gatti");
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }

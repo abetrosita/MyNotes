@@ -1,5 +1,7 @@
 package com.example.abetrosita.mynotes;
 
+import android.net.Uri;
+
 /**
  * Created by AbetRosita on 1/14/2017.
  */
@@ -39,5 +41,9 @@ public class AppConstants {
 
     public static final String INTENT_EXTRA_ID = "note_id";
     public static final boolean LABEL_IS_CLICKABLE = true;
+
+    public static final String CONTENT_AUTHORITY = "com.example.abetrosita.mynotes.provider";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String VND_PREFIX = "vnd.android.cursor.";
 
 }

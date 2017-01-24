@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,7 +24,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,9 +42,12 @@ public class MainActivity extends AppCompatActivity implements
     private Cursor mCursor;
     private String mFilterText;
     private int mNoteStatusFilter;
+    private static int mLoaderId = 1;
 
-
-    public static final int LOADER_ID = 1;
+    public static final int LOADER_ID = AppConstants.NOTE_STATUS_DEFAULT;
+    public static final int NOTE_LOADER_ID = AppConstants.NOTE_STATUS_ACTIVE;
+    public static final int ARCHIVE_LOADER_ID = AppConstants.NOTE_STATUS_ARCHIVED;
+    public static final int DELETED_LOADER_ID = AppConstants.NOTE_STATUS_DELETED;
     public static LoaderManager mLoaderManager;
     public static LoaderManager.LoaderCallbacks mCallback;
     public static NotesAdapter mNotesAdapter;
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements
         mNoteList.setAdapter(mNotesAdapter);
 
         mLoaderManager = getSupportLoaderManager();
+
 
         mAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,7 +174,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         //Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
-        mLoaderManager.restartLoader(LOADER_ID, null, this);
+        mLoaderManager.restartLoader(mLoaderId, null, this);
+
 
     }
 
@@ -205,18 +210,20 @@ public class MainActivity extends AppCompatActivity implements
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
         if (id == R.id.nav_status_active) {
             mNoteStatusFilter = AppConstants.NOTE_STATUS_ACTIVE;
+            mLoaderId = NOTE_LOADER_ID;
             this.setTitle("Notes");
         } else if (id == R.id.nav_status_archive) {
             mNoteStatusFilter = AppConstants.NOTE_STATUS_ARCHIVED;
+            mLoaderId = ARCHIVE_LOADER_ID;
             this.setTitle("Archive");
 
         } else if (id == R.id.nav_status_deleted) {
             mNoteStatusFilter = AppConstants.NOTE_STATUS_DELETED;
+            mLoaderId = DELETED_LOADER_ID;
             this.setTitle("Deleted");
 
         } else if (id == R.id.nav_manage) {
@@ -227,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
-        mLoaderManager.restartLoader(LOADER_ID, null, mCallback);
+        mLoaderManager.restartLoader(mLoaderId, null, mCallback);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -236,9 +243,12 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(LOG_TAG, "+++ MAIN ACIVITY LOADER CREATE CALLED");
-        mContentResolver = this.getContentResolver();
-        return new NotesLoader(this, mNoteStatusFilter, mContentResolver, mFilterText);
+        //Log.d(LOG_TAG, "+++ MAIN ACIVITY LOADER CREATE CALLED");
+        //mContentResolver = this.getContentResolver();
+        String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mNoteStatusFilter);
+        CursorLoader cursorLoader = new CursorLoader(this, NotesContract.URI_TABLE, null, selection, null, null);
+        return cursorLoader;
+        //return new NotesLoader(this, mNoteStatusFilter, mContentResolver, mFilterText);
     }
 
     @Override
@@ -246,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements
         mCursor = cursor;
         TextView emptyList = (TextView) findViewById(R.id.tv_add_note);
         if(cursor != null) {
-            Log.d(LOG_TAG, "+++ MAIN ACIVITY LOADER REFRESH CALLED");
             mNotesAdapter.reloadNotesData(mCursor);
             emptyList.setVisibility(View.GONE);
         }else {
@@ -256,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.d(LOG_TAG, "+++ MAIN ACIVITY LOADER RESET CALLED");
         mNotesAdapter.reloadNotesData(null);
     }
 

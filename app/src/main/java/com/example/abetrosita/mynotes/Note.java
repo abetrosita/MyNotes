@@ -54,6 +54,7 @@ public class Note implements Serializable {
         mStatus = AppConstants.NOTE_STATUS_DEFAULT;
         mTitle = title;
         mBody = body;
+        mLabel = "";
         mImagePath = imagePath;
         mImageLocation = AppConstants.NOTE_IMAGE_LOCATION_DEFAULT;
         mDateModified = getDateTime();

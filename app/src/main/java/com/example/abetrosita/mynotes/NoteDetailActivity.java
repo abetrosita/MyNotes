@@ -1,9 +1,12 @@
 package com.example.abetrosita.mynotes;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -50,6 +53,7 @@ public class NoteDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        final Context context = this;
         mImagePath = "";
 
         mFlowLayoutLabel = (FlowLayout) findViewById(R.id.ll_note_labels);
@@ -60,6 +64,30 @@ public class NoteDetailActivity extends AppCompatActivity {
         //mTextViewLabel = (EditText) findViewById(R.id.et_note_label);
 
         mImageView = (ImageView) findViewById(R.id.detail_image);
+        mImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                dialogBuilder.setTitle("Delete Image");
+                dialogBuilder.setMessage("Do you want to delete the selected image?");
+                dialogBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int which) {
+                        mImageView.setVisibility(View.GONE);
+                        mImagePath = "";
+                    }
+                });
+                dialogBuilder.show();
+                return true;
+            }
+        });
+
         mValues = new ContentValues();
         //TODO: CONSIDER TO ADD MULTIPLE IMAGES
         mImageView.setVisibility(View.GONE);
@@ -69,7 +97,6 @@ public class NoteDetailActivity extends AppCompatActivity {
             mNote = (Note) getIntent().getSerializableExtra(AppConstants.NOTE_INTENT_OBJECT);
             mEditTextTitle.setText(mNote.getTitle());
             mEditTextBody.setText(mNote.getBody());
-            //mTextViewLabel.setText(mNote.getLabel());
             mLabels = mNote.getLabelList();
             mFlowLayoutLabel.addView(new LabelListLayout(this, mLabels, LABEL_IS_CLICKABLE));
             mImagePath = mNote.getImagePath();
@@ -90,7 +117,6 @@ public class NoteDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         String title = mEditTextTitle.getText().toString();
         String body = mEditTextBody.getText().toString();
-        //String label = mTextViewLabel.getText().toString();
         String imagePath = AppConstants.NOTE_NO_IMAGE;
 
         if(title.length() + body.length() == 0) {

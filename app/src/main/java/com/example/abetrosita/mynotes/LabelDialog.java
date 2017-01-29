@@ -9,6 +9,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +51,7 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
         insertedLabel = new ArrayList<>();
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mView= inflater.inflate(R.layout.note_label_dialog, null);
+        mView= inflater.inflate(R.layout.dialog_label, null);
 
         RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.rv_note_dialog_label_list);
         recyclerView.setHasFixedSize(true);
@@ -69,47 +71,88 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id){
-                Toast.makeText(mContext, "OK Clicked", Toast.LENGTH_SHORT).show();
+                if(insertedLabel != null){
+                    for(Label label : insertedLabel){
+                        ContentValues values= label.getContentValues();
+                        mContentResolver.insert(LabelContract.URI_TABLE, values);
+                    }
+                }
+
                 if(deletedLabel != null){
                     for(Label label : deletedLabel){
                         Uri uri = LabelContract.Labels.buildLabelUri(String.valueOf(label.getId()));
                         mContentResolver.delete(uri, null, null);
-                        Log.d("URI_ALBEL", uri.toString());
+                        Log.d("LABEL_DELETED", uri.toString());
                     }
                 }
 
-                //mLoaderManager.restartLoader(NOTE_LOADER_ID, null, noteLoader);
-
             }
         });
-
         dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dia, int id){
                 dia.cancel();
             }
         });
-
         dialog.show();
 
-        ((EditText) mView.findViewById(R.id.et_add_label)).clearFocus();
+        setUpAddLabelAction();
+    }
+
+    private void setUpAddLabelAction(){
+        final EditText etAddLabel = (EditText) mView.findViewById(R.id.et_add_label);
+        final ImageView ivAccept = (ImageView) mView.findViewById(R.id.iv_accept_label);
         ImageView ivAddLabel = (ImageView) mView.findViewById(R.id.iv_add_label);
-        ivAddLabel.setOnClickListener(new View.OnClickListener() {
+
+        etAddLabel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(count>0){
+                    ivAccept.setVisibility(View.VISIBLE);
+                 }else {
+                    ivAccept.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        etAddLabel.clearFocus();
+
+        ivAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Label label = new Label(String.valueOf(((EditText) mView.findViewById(R.id.et_add_label)).getText()));
-                ContentValues values= label.getContentValues();
-                mLabels.add(label);
-                mLabelAdapter.notifyItemInserted(mLabels.size());
-                mContentResolver.insert(LabelContract.URI_TABLE, values);
+                String labelName = etAddLabel.getText().toString();
+                if(isLabelNameExists(labelName)){
+                    Toast.makeText(mContext, "Label " + labelName + " already exists...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                //mCursor = mContentResolver.query(LabelContract.URI_TABLE, null, null, null, null);
-                //mLabelAdapter.loadLabelData(mCursor);
+                Label label = new Label(labelName);
+                label.setNew(true);
+                mLabels.add(0, label);
+                mLabelAdapter.notifyDataSetChanged();
+                insertedLabel.add(label);
+                etAddLabel.setText(null);
             }
         });
 
     }
 
+    private boolean isLabelNameExists(String labelName){
+        boolean exists = false;
+        for(Label label : mLabels){
+            if(label.getName().equals(labelName)){
+                exists = true;
+            }
+        }
+        return exists;
+    }
 
     @Override
     public void onClick(View view, View deleteView) {
@@ -132,9 +175,16 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
             }
         }else if(viewName.equals("iv_delete_label")){
             int pos = Integer.parseInt(deleteView.getTag().toString());
-            deletedLabel.add(mLabels.get(pos));
+            if(!mLabels.get(pos).isNew()){
+                deletedLabel.add(mLabels.get(pos));
+            }else{
+                for(Label label : insertedLabel){
+                    if(label.getName().equals(mLabels.get(pos).getName())){
+                        insertedLabel.remove(label);
+                    }
+                }
+            }
             mLabels.remove(pos);
-
             mLabelAdapter.notifyItemRemoved(pos);
             mLabelAdapter.notifyItemRangeChanged(pos, mLabels.size());
         }

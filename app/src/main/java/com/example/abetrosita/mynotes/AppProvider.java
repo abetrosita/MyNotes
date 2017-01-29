@@ -64,6 +64,7 @@ public class AppProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         final int match = sUriMatcher.match(uri);
         final String lastPath = uri.getLastPathSegment();
+        sortOrder = BaseColumns._ID + " DESC";
 
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
@@ -125,7 +126,7 @@ public class AppProvider extends ContentProvider {
         Log.v(TAG, "insert(uri=" + uri + " values=" + values.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        long recordId;
+        long recordId = -1;
 
         switch (match) {
             case NOTES:
@@ -133,14 +134,14 @@ public class AppProvider extends ContentProvider {
                 if(recordId > 0){
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
+                Log.d(LOG_TAG, "NOTE ADDED");
                 return NoteContract.Notes.buildNoteUri(String.valueOf(recordId));
             case LABELS:
                 recordId = db.insertOrThrow(AppDatabase.Tables.LABELS, null, values);
                 if(recordId > 0){
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
-
-                Log.d(LOG_TAG, "Item added in databaes" + String.valueOf(recordId));
+                Log.d(LOG_TAG, "LABEL ADDED");
                 return NoteContract.Notes.buildNoteUri(String.valueOf(recordId));
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);

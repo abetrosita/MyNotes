@@ -16,7 +16,6 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
     private static final String LOG_TAG = LabelAdapter.class.getSimpleName();
     final private LabelOnClickHandler mClickHandler;
     private List<Label> mLabels;
-    private RecyclerView.ViewHolder mViewHolder;
 
     public LabelAdapter(List<Label> labels, LabelOnClickHandler clickHandler) {
         mLabels = labels;
@@ -34,7 +33,7 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
-        View view = layoutInflater.inflate(R.layout.note_label_dialog_item, parent,
+        View view = layoutInflater.inflate(R.layout.dialog_label_item, parent,
                 shouldAttachToParentImmediately);
 
         return new LabelAdapter.LabelViewHolder(view);
@@ -46,7 +45,6 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
         holder.label.setText(mLabels.get(position).getName());
         holder.label.setTag(mLabels.get(position).getId());
         holder.ivDeleteLabel.setTag(position);
-        mViewHolder = holder;
     }
 
     @Override

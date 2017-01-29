@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity implements
     public static final int NOTE_LOADER_ID = AppConstant.NOTE_STATUS_ACTIVE;
     public static final int ARCHIVE_LOADER_ID = AppConstant.NOTE_STATUS_ARCHIVED;
     public static final int DELETED_LOADER_ID = AppConstant.NOTE_STATUS_DELETED;
-    public static LoaderManager mLoaderManager;
-    public static NoteAdapter sMNoteAdapter;
+    //public static LoaderManager mLoaderManager;
+    public  NoteAdapter sMNoteAdapter;
     public static ContentResolver mContentResolver;
-    public static Context mContext;
+    public  Context mContext;
 
     public static List<Label> mLabels;
 
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
         sMNoteAdapter = new NoteAdapter(null, this);
         mNoteList.setAdapter(sMNoteAdapter);
 
-        mLoaderManager = getSupportLoaderManager();
+        //mLoaderManager = getSupportLoaderManager();
 
 
         mAddNote.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements
                 final ContentValues cv = new ContentValues();
                 cv.put(NoteContract.Columns.STATUS, swipeStatusAction);
                 mContentResolver.update(uri, cv, null, null);
-                mLoaderManager.restartLoader(NOTE_LOADER_ID, null, noteLoader);
+                getSupportLoaderManager().restartLoader(NOTE_LOADER_ID, null, noteLoader);
 
                 Snackbar.make(viewHolder.itemView, swipeMessage, Snackbar.LENGTH_LONG)
                         .setAction("UNDO", new View.OnClickListener() {
@@ -146,12 +146,16 @@ public class MainActivity extends AppCompatActivity implements
                             public void onClick(View v) {
                                 cv.put(NoteContract.Columns.STATUS, mNoteStatusFilter);
                                 mContentResolver.update(uri, cv, null, null);
-                                mLoaderManager.restartLoader(NOTE_LOADER_ID, null, noteLoader);
+                                getSupportLoaderManager().restartLoader(NOTE_LOADER_ID, null, noteLoader);
                             }
                         }).show();
 
            }
         }).attachToRecyclerView(mNoteList);
+
+
+        //getSupportLoaderManager().initLoader(mLoaderId, null, noteLoader);
+        getSupportLoaderManager().initLoader(LABEL_LOADER_ID, null, labelLoader);
 
         final int REQUEST_CODE_ASK_PERMISSIONS = 555;
         int hasReadContactsPermission =
@@ -183,8 +187,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
-        mLoaderManager.restartLoader(LABEL_LOADER_ID, null, labelLoader);
-        mLoaderManager.restartLoader(mLoaderId, null, noteLoader);
+        getSupportLoaderManager().restartLoader(mLoaderId, null, noteLoader);
+//        getSupportLoaderManager().restartLoader(LABEL_LOADER_ID, null, labelLoader);
     }
 
     @Override
@@ -209,8 +213,7 @@ public class MainActivity extends AppCompatActivity implements
         if (id == R.id.action_settings) {
             return true;
         }else if(id == R.id.action_label){
-
-            mLoaderManager.restartLoader(LABEL_LOADER_ID, null, labelLoader);
+            getSupportLoaderManager().restartLoader(LABEL_LOADER_ID, null, labelLoader);
             new LabelDialog(mContext, mLabels);
         }
 
@@ -234,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements
         } else if (id == R.id.nav_status_deleted) {
             mNoteStatusFilter = AppConstant.NOTE_STATUS_DELETED;
             mLoaderId = DELETED_LOADER_ID;
-            this.setTitle("Deleted");
+            this.setTitle("Trash");
 
         } else if (id == R.id.nav_manage) {
 
@@ -244,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
-        mLoaderManager.restartLoader(mLoaderId, null, noteLoader);
+        getSupportLoaderManager().restartLoader(mLoaderId, null, noteLoader);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -255,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            Log.d(LOG_TAG, "NOTE ON CREATE LOADER CALLED");
             String selection = NoteContract.Columns.STATUS + "=" + String.valueOf(mNoteStatusFilter);
             return new CursorLoader(MainActivity.this, NoteContract.URI_TABLE, null, selection, null, null);
         }
@@ -262,13 +266,15 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
             mCursor = cursor;
+            Log.d(LOG_TAG, "NOTE ON LOAD FINISHED CALLED: " + String.valueOf(cursor.getCount()));
             TextView emptyList = (TextView) findViewById(R.id.tv_add_note);
-            if(cursor.getCount() ==0) {
-                sMNoteAdapter.reloadNotesData(mCursor);
+            if(cursor.getCount() > 0) {
                 emptyList.setVisibility(View.GONE);
             }else {
                 emptyList.setVisibility(View.VISIBLE);
             }
+            sMNoteAdapter.reloadNotesData(mCursor);
+
         }
 
         @Override
@@ -281,13 +287,15 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            Log.d(LOG_TAG, "LABEL ON CREATE LOADER CALLED");
+            mLabels.clear();
             return new CursorLoader(MainActivity.this, LabelContract.URI_TABLE, null, null, null, null);
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            Log.d(LOG_TAG, "LABEL ON FINISHED LOADER CALLED");
             if(cursor.getCount() == 0) return;
-            mLabels.clear();
             cursor.moveToFirst();
             do {
                 mLabels.add(new Label(cursor));

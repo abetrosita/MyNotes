@@ -15,6 +15,7 @@ public class Label implements Serializable{
     private String mName;
     private String mColor;
     private int mPosition;
+    private boolean mNew;
 
     private static final long serialVersionUID = 2L;
 
@@ -37,6 +38,7 @@ public class Label implements Serializable{
         mName =  cursor.getString(cursor.getColumnIndex(LabelContract.Columns.LABEL_NAME));
         mColor =  cursor.getString(cursor.getColumnIndex(LabelContract.Columns.LABEL_COLOR));
         mPosition = cursor.getInt(cursor.getColumnIndex(LabelContract.Columns.LABEL_POSITION));
+        mNew = false;
     }
 
     public ContentValues getContentValues(){
@@ -55,6 +57,17 @@ public class Label implements Serializable{
         return mId;
     }
 
+    public void setId(int id) {
+        mId = id;
+    }
+
+    public void setNew(boolean _new){
+        mNew = _new;
+    }
+
+    public boolean isNew(){
+        return mNew;
+    }
     public String getName() {
         return mName;
     }

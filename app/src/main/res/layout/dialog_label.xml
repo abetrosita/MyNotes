@@ -17,6 +17,8 @@
 
         <ImageView
             android:id="@+id/iv_add_label"
+            android:layout_marginLeft="15dp"
+            android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_label_add"/>
@@ -29,12 +31,22 @@
 
         <EditText
             android:id="@+id/et_add_label"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
             android:hint="Add a label..."
+            android:maxLines="1"
+            android:inputType="text"
             android:paddingLeft="12dp"
             android:textSize="14sp"/>
+        <ImageView
+            android:id="@+id/iv_accept_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:visibility="gone"
+            android:src="@drawable/ic_check_primary"/>
     </LinearLayout>
 
     <ScrollView

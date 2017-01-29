@@ -11,27 +11,27 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
 
-public class NotesLoader extends AsyncTaskLoader<Cursor> {
-    private static final String LOG_TAG = NotesLoader.class.getSimpleName();
+public class NoteLoader extends AsyncTaskLoader<Cursor> {
+    private static final String LOG_TAG = NoteLoader.class.getSimpleName();
     private ContentResolver mContentResolver;
     private Cursor mCursor;
     private int mStatus;
     private String mFilterText;
 
-    public NotesLoader(Context context, int status, ContentResolver contentResolver, String filterText){
+    public NoteLoader(Context context, int status, ContentResolver contentResolver, String filterText){
         super(context);
         mContentResolver = contentResolver;
         mFilterText = filterText;
         mStatus = status;
     }
 
-    public NotesLoader(Context context, Uri uri, ContentResolver contentResolver){
+    public NoteLoader(Context context, Uri uri, ContentResolver contentResolver){
         super(context);
         mContentResolver = contentResolver;
         mFilterText = "";
     }
 
-    public NotesLoader(Context context) {
+    public NoteLoader(Context context) {
         super(context);
     }
 
@@ -61,8 +61,8 @@ public class NotesLoader extends AsyncTaskLoader<Cursor> {
     @Override
     public Cursor loadInBackground() {
         //TODO: ADD SEARCH FUNCTION
-        String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mStatus);
-        mCursor = mContentResolver.query(NotesContract.URI_TABLE, null, selection, null, null);
+        String selection = NoteContract.Columns.STATUS + "=" + String.valueOf(mStatus);
+        mCursor = mContentResolver.query(NoteContract.URI_TABLE, null, selection, null, null);
         return mCursor;
     }
 

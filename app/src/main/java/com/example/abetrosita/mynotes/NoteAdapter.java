@@ -18,9 +18,9 @@ import com.squareup.picasso.Picasso;
 import java.util.Arrays;
 
 
-public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder>{
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder>{
 
-    private static final String LOG_TAG = NotesAdapter.class.getSimpleName();
+    private static final String LOG_TAG = NoteAdapter.class.getSimpleName();
     private Cursor mCursor;
     private Context mContext;
 
@@ -30,7 +30,7 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
         void onClick(View view);
     }
 
-    public NotesAdapter(Cursor cursor, NotesAdapterOnClickHandler clickHandler) {
+    public NoteAdapter(Cursor cursor, NotesAdapterOnClickHandler clickHandler) {
         mCursor = cursor;
         mClickHandler = clickHandler;
     }
@@ -53,16 +53,16 @@ public class NotesAdapter  extends RecyclerView.Adapter<NotesAdapter.NoteViewHol
         if(!mCursor.moveToPosition(position)) return;
 
         String noteLabel = mCursor.getString(
-                mCursor.getColumnIndex(NotesContract.Columns.LABEL));
+                mCursor.getColumnIndex(NoteContract.Columns.LABEL));
         String noteImagePath = mCursor.getString(
-                mCursor.getColumnIndex(NotesContract.Columns.IMAGE_PATH));
+                mCursor.getColumnIndex(NoteContract.Columns.IMAGE_PATH));
 
         holder.mTextViewTitle.setText(mCursor.getString(
-                mCursor.getColumnIndex(NotesContract.Columns.TITLE)));
+                mCursor.getColumnIndex(NoteContract.Columns.TITLE)));
         holder.mTextViewBody.setText(mCursor.getString(
-                mCursor.getColumnIndex(NotesContract.Columns.BODY)));
+                mCursor.getColumnIndex(NoteContract.Columns.BODY)));
         holder.mTextViewDateCreate.setText(mCursor.getString(
-                mCursor.getColumnIndex(NotesContract.Columns.DATE_CREATED)));
+                mCursor.getColumnIndex(NoteContract.Columns.DATE_CREATED)));
         holder.itemView.setTag(mCursor.getString(
                 mCursor.getColumnIndex(BaseColumns._ID)));
         holder.mNoteCardView.setTag(mCursor.getString(

@@ -25,7 +25,7 @@
         </activity>
 
         <provider
-            android:name=".NotesProvider"
+            android:name=".AppProvider"
             android:authorities="com.example.abetrosita.mynotes.provider"
             android:exported="true"
             android:readPermission="com.example.abetrosita.mynotes.provider.READWRITE"

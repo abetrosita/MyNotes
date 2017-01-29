@@ -1,27 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:padding="10dp"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_note_dialog_label_list"
-            android:layout_marginLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
-
-    </ScrollView>
-
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:windowSoftInputMode="adjustPan|adjustResize">
 
     <LinearLayout
+        android:id="@+id/ll_new_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:orientation="horizontal">
 
@@ -30,15 +20,38 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_label_add"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp">
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+        </LinearLayout>
 
         <EditText
             android:id="@+id/et_add_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Add a label..."
             android:layout_marginLeft="12dp"
+            android:hint="Add a label..."
             android:paddingLeft="12dp"
             android:textSize="14sp"/>
     </LinearLayout>
 
-</LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_new_label">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_note_dialog_label_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp">
+        </android.support.v7.widget.RecyclerView>
+
+    </ScrollView>
+
+
+
+
+</RelativeLayout>

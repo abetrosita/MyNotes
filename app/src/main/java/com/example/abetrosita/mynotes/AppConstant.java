@@ -6,7 +6,7 @@ import android.net.Uri;
  * Created by AbetRosita on 1/14/2017.
  */
 
-public class AppConstants {
+public class AppConstant {
 
     public static final String NOTE_URI_PREFIX_ID = "ID_";
     public static final String NOTE_URI_SEGMENT_TYPE = "type";

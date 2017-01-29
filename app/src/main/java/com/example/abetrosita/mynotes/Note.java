@@ -51,12 +51,12 @@ public class Note implements Serializable {
 
     public Note(String title, String body, String imagePath) {
         mType = type;
-        mStatus = AppConstants.NOTE_STATUS_DEFAULT;
+        mStatus = AppConstant.NOTE_STATUS_DEFAULT;
         mTitle = title;
         mBody = body;
         mLabel = "";
         mImagePath = imagePath;
-        mImageLocation = AppConstants.NOTE_IMAGE_LOCATION_DEFAULT;
+        mImageLocation = AppConstant.NOTE_IMAGE_LOCATION_DEFAULT;
         mDateModified = getDateTime();
         mDateCreated = mDateModified;
     }
@@ -64,15 +64,15 @@ public class Note implements Serializable {
     public Note (Cursor cursor){
         cursor.moveToFirst();
         mId =  cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-        mType =  cursor.getInt(cursor.getColumnIndex(NotesContract.Columns.TYPE));
-        mStatus = cursor.getInt(cursor.getColumnIndex(NotesContract.Columns.STATUS));
-        mTitle = cursor.getString(cursor.getColumnIndex(NotesContract.Columns.TITLE));
-        mBody = cursor.getString(cursor.getColumnIndex(NotesContract.Columns.BODY));
-        mImagePath = cursor.getString(cursor.getColumnIndex(NotesContract.Columns.IMAGE_PATH));
-        mImageLocation = cursor.getInt(cursor.getColumnIndex(NotesContract.Columns.IMAGE_LOCATION));
-        mLabel = cursor.getString(cursor.getColumnIndex(NotesContract.Columns.LABEL));
-        mDateCreated = cursor.getString(cursor.getColumnIndex(NotesContract.Columns.DATE_CREATED));
-        mDateModified = cursor.getString(cursor.getColumnIndex(NotesContract.Columns.DATE_MODIFIED));
+        mType =  cursor.getInt(cursor.getColumnIndex(NoteContract.Columns.TYPE));
+        mStatus = cursor.getInt(cursor.getColumnIndex(NoteContract.Columns.STATUS));
+        mTitle = cursor.getString(cursor.getColumnIndex(NoteContract.Columns.TITLE));
+        mBody = cursor.getString(cursor.getColumnIndex(NoteContract.Columns.BODY));
+        mImagePath = cursor.getString(cursor.getColumnIndex(NoteContract.Columns.IMAGE_PATH));
+        mImageLocation = cursor.getInt(cursor.getColumnIndex(NoteContract.Columns.IMAGE_LOCATION));
+        mLabel = cursor.getString(cursor.getColumnIndex(NoteContract.Columns.LABEL));
+        mDateCreated = cursor.getString(cursor.getColumnIndex(NoteContract.Columns.DATE_CREATED));
+        mDateModified = cursor.getString(cursor.getColumnIndex(NoteContract.Columns.DATE_MODIFIED));
     }
 
     public static long getSerialVersionUID() {
@@ -81,14 +81,14 @@ public class Note implements Serializable {
 
     public ContentValues getContentValues(){
         ContentValues cv = new ContentValues();
-        cv.put(NotesContract.Columns.TYPE, mType);
-        cv.put(NotesContract.Columns.STATUS, mStatus);
-        cv.put(NotesContract.Columns.TITLE, mTitle);
-        cv.put(NotesContract.Columns.BODY, mBody);
-        cv.put(NotesContract.Columns.LABEL, mLabel);
-        cv.put(NotesContract.Columns.IMAGE_PATH, mImagePath);
-        cv.put(NotesContract.Columns.IMAGE_LOCATION, mImageLocation);
-        cv.put(NotesContract.Columns.DATE_MODIFIED, mDateModified);
+        cv.put(NoteContract.Columns.TYPE, mType);
+        cv.put(NoteContract.Columns.STATUS, mStatus);
+        cv.put(NoteContract.Columns.TITLE, mTitle);
+        cv.put(NoteContract.Columns.BODY, mBody);
+        cv.put(NoteContract.Columns.LABEL, mLabel);
+        cv.put(NoteContract.Columns.IMAGE_PATH, mImagePath);
+        cv.put(NoteContract.Columns.IMAGE_LOCATION, mImageLocation);
+        cv.put(NoteContract.Columns.DATE_MODIFIED, mDateModified);
         return cv;
     }
 

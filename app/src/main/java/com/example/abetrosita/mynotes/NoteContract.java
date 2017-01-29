@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  * Created by AbetRosita on 1/14/2017.
  */
 
-public class NotesContract {
+public class NoteContract {
     interface Columns {
         String TYPE = "note_type";
         String STATUS = "note_status";
@@ -29,11 +29,11 @@ public class NotesContract {
     public static final Uri URI_TABLE = BASE_CONTENT_URI.buildUpon().
             appendEncodedPath(PATH_NOTES).build();
     public static final Uri URI_TYPE = URI_TABLE.buildUpon().
-            appendEncodedPath(AppConstants.NOTE_URI_SEGMENT_TYPE).build();
+            appendEncodedPath(AppConstant.NOTE_URI_SEGMENT_TYPE).build();
     public static final Uri URI_STATUS = URI_TABLE.buildUpon().
-            appendEncodedPath(AppConstants.NOTE_URI_SEGMENT_STATUS).build();
+            appendEncodedPath(AppConstant.NOTE_URI_SEGMENT_STATUS).build();
     public static final Uri URI_LABEL = URI_TABLE.buildUpon().
-            appendEncodedPath(AppConstants.NOTE_URI_SEGMENT_LABEL).build();
+            appendEncodedPath(AppConstant.NOTE_URI_SEGMENT_LABEL).build();
 
     public static class Notes implements Columns, BaseColumns {
         public static final String CONTENT_TYPE = VND_PREFIX + "dir/" + CONTENT_AUTHORITY + "." + PATH_NOTES;

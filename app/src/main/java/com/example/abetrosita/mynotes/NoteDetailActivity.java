@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.example.abetrosita.mynotes.AppConstants.LABEL_IS_CLICKABLE;
+import static com.example.abetrosita.mynotes.AppConstant.LABEL_IS_CLICKABLE;
 
 /**
  * Created by AbetRosita on 1/14/2017.
@@ -92,9 +91,9 @@ public class NoteDetailActivity extends AppCompatActivity {
         //TODO: CONSIDER TO ADD MULTIPLE IMAGES
         mImageView.setVisibility(View.GONE);
 
-        mIntentAction = getIntent().getStringExtra(AppConstants.NOTE_INTENT_ACTION);
-        if(mIntentAction.equals(AppConstants.NOTE_INTENT_UPDATE)){
-            mNote = (Note) getIntent().getSerializableExtra(AppConstants.NOTE_INTENT_OBJECT);
+        mIntentAction = getIntent().getStringExtra(AppConstant.NOTE_INTENT_ACTION);
+        if(mIntentAction.equals(AppConstant.NOTE_INTENT_UPDATE)){
+            mNote = (Note) getIntent().getSerializableExtra(AppConstant.NOTE_INTENT_OBJECT);
             mEditTextTitle.setText(mNote.getTitle());
             mEditTextBody.setText(mNote.getBody());
             mLabels = mNote.getLabelList();
@@ -117,30 +116,30 @@ public class NoteDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         String title = mEditTextTitle.getText().toString();
         String body = mEditTextBody.getText().toString();
-        String imagePath = AppConstants.NOTE_NO_IMAGE;
+        String imagePath = AppConstant.NOTE_NO_IMAGE;
 
         if(title.length() + body.length() == 0) {
-            Toast.makeText(this, "Empty note not saved.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Empty note not saved.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         switch (mIntentAction){
-            case AppConstants.NOTE_INTENT_ADD:
+            case AppConstant.NOTE_INTENT_ADD:
                 Note note = new Note(title, body, imagePath);
                 mValues = note.getContentValues();
-                mValues.put(NotesContract.Columns.IMAGE_PATH, mImagePath);
-                MainActivity.mContentResolver.insert(NotesContract.URI_TABLE, mValues);
+                mValues.put(NoteContract.Columns.IMAGE_PATH, mImagePath);
+                MainActivity.mContentResolver.insert(NoteContract.URI_TABLE, mValues);
                 break;
-            case AppConstants.NOTE_INTENT_UPDATE:
+            case AppConstant.NOTE_INTENT_UPDATE:
                 mNote.setTitle(title);
                 mNote.setBody(body);
                 //mNote.setLabel(label);
                 mNote.setDateModified(getDateTime());
                 mValues = mNote.getContentValues();
-                mValues.put(NotesContract.Columns.IMAGE_PATH, mImagePath);
+                mValues.put(NoteContract.Columns.IMAGE_PATH, mImagePath);
                 Log.d(LOG_TAG, "++++ ImagePath:" + mImagePath);
-                Uri uri = NotesContract.Notes.buildNoteUri(String.valueOf(mNote.getId()));
+                Uri uri = NoteContract.Notes.buildNoteUri(String.valueOf(mNote.getId()));
                 MainActivity.mContentResolver.update(uri, mValues, null, null);
                 break;
         }
@@ -153,7 +152,7 @@ public class NoteDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_edit, menu);
 
-        if(mIntentAction.equals(AppConstants.NOTE_INTENT_UPDATE)){
+        if(mIntentAction.equals(AppConstant.NOTE_INTENT_UPDATE)){
             this.setTitle("Edit Note");
         }else {
             this.setTitle("Add Note");

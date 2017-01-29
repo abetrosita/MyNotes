@@ -24,16 +24,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        NotesAdapter.NotesAdapterOnClickHandler,
-        LoaderManager.LoaderCallbacks<Cursor>{
+        NoteAdapter.NotesAdapterOnClickHandler{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private RecyclerView mNoteList;
@@ -43,17 +46,21 @@ public class MainActivity extends AppCompatActivity implements
     private String mFilterText;
     private int mNoteStatusFilter;
     private static int mLoaderId = 1;
+    private static int mActiveLoaderId = 1;
 
-    public static final int LOADER_ID = AppConstants.NOTE_STATUS_DEFAULT;
-    public static final int NOTE_LOADER_ID = AppConstants.NOTE_STATUS_ACTIVE;
-    public static final int ARCHIVE_LOADER_ID = AppConstants.NOTE_STATUS_ARCHIVED;
-    public static final int DELETED_LOADER_ID = AppConstants.NOTE_STATUS_DELETED;
+    private LoaderManager.LoaderCallbacks noteLoader;
+    private LoaderManager.LoaderCallbacks labelLoader;
+
+    public static final int LABEL_LOADER_ID = 100;
+    public static final int NOTE_LOADER_ID = AppConstant.NOTE_STATUS_ACTIVE;
+    public static final int ARCHIVE_LOADER_ID = AppConstant.NOTE_STATUS_ARCHIVED;
+    public static final int DELETED_LOADER_ID = AppConstant.NOTE_STATUS_DELETED;
     public static LoaderManager mLoaderManager;
-    public static LoaderManager.LoaderCallbacks mCallback;
-    public static NotesAdapter mNotesAdapter;
+    public static NoteAdapter sMNoteAdapter;
     public static ContentResolver mContentResolver;
     public static Context mContext;
 
+    public static List<Label> mLabels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,18 +72,20 @@ public class MainActivity extends AppCompatActivity implements
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         //TODO: Save preference to save state of status...
-        mNoteStatusFilter = AppConstants.NOTE_STATUS_DEFAULT;
+        mNoteStatusFilter = AppConstant.NOTE_STATUS_DEFAULT;
         mAddNote = (TextView) findViewById(R.id.tv_add_normal_note);
         mNoteList = (RecyclerView) findViewById(R.id.rv_notes);
         mNoteList.setLayoutManager(layoutManager);
         mNoteList.setHasFixedSize(false);
-        mCallback = this;
         mContext = this;
         mFilterText = "";
+        mLabels = new ArrayList<>();
+        noteLoader = new NoteLoader();
+        labelLoader = new LabelLoader();
 
         mContentResolver = this.getContentResolver();
-        mNotesAdapter = new NotesAdapter(null, this);
-        mNoteList.setAdapter(mNotesAdapter);
+        sMNoteAdapter = new NoteAdapter(null, this);
+        mNoteList.setAdapter(sMNoteAdapter);
 
         mLoaderManager = getSupportLoaderManager();
 
@@ -85,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
-                intent.putExtra(AppConstants.NOTE_INTENT_ACTION, AppConstants.NOTE_INTENT_ADD);
+                intent.putExtra(AppConstant.NOTE_INTENT_ACTION, AppConstant.NOTE_INTENT_ADD);
                 startActivity(intent);
             }
         });
@@ -102,42 +111,42 @@ public class MainActivity extends AppCompatActivity implements
                 final int swipeStatusAction;
                 final String swipeMessage;
 
-                if(mNoteStatusFilter == AppConstants.NOTE_STATUS_DELETED) {
-                    swipeStatusAction = AppConstants.NOTE_STATUS_ARCHIVED;
-                }else if(mNoteStatusFilter == AppConstants.NOTE_STATUS_ARCHIVED){
+                if(mNoteStatusFilter == AppConstant.NOTE_STATUS_DELETED) {
+                    swipeStatusAction = AppConstant.NOTE_STATUS_ARCHIVED;
+                }else if(mNoteStatusFilter == AppConstant.NOTE_STATUS_ARCHIVED){
                     if(swipeDir == ItemTouchHelper.RIGHT){
-                        swipeStatusAction = AppConstants.NOTE_STATUS_DELETED;
+                        swipeStatusAction = AppConstant.NOTE_STATUS_DELETED;
                     }else {
-                        swipeStatusAction = AppConstants.NOTE_STATUS_ACTIVE;
+                        swipeStatusAction = AppConstant.NOTE_STATUS_ACTIVE;
                     }
-                }else if(mNoteStatusFilter == AppConstants.NOTE_STATUS_ACTIVE){
-                    swipeStatusAction = AppConstants.NOTE_STATUS_ARCHIVED;
+                }else if(mNoteStatusFilter == AppConstant.NOTE_STATUS_ACTIVE){
+                    swipeStatusAction = AppConstant.NOTE_STATUS_ARCHIVED;
                 }else {
                     swipeStatusAction = mNoteStatusFilter;
                 }
 
-                if(swipeStatusAction == AppConstants.NOTE_STATUS_DELETED){
+                if(swipeStatusAction == AppConstant.NOTE_STATUS_DELETED){
                     swipeMessage = "Note deleted.";
-                }else if(swipeStatusAction == AppConstants.NOTE_STATUS_ARCHIVED){
+                }else if(swipeStatusAction == AppConstant.NOTE_STATUS_ARCHIVED){
                     swipeMessage = "Note archived.";
                 }else {
                     swipeMessage = "Note restored.";
                 }
 
                 String viewTag = (String) viewHolder.itemView.getTag();
-                final Uri uri = NotesContract.Notes.buildNoteUri(viewTag);
+                final Uri uri = NoteContract.Notes.buildNoteUri(viewTag);
                 final ContentValues cv = new ContentValues();
-                cv.put(NotesContract.Columns.STATUS, swipeStatusAction);
+                cv.put(NoteContract.Columns.STATUS, swipeStatusAction);
                 mContentResolver.update(uri, cv, null, null);
-                mLoaderManager.restartLoader(LOADER_ID, null, mCallback);
+                mLoaderManager.restartLoader(NOTE_LOADER_ID, null, noteLoader);
 
                 Snackbar.make(viewHolder.itemView, swipeMessage, Snackbar.LENGTH_LONG)
                         .setAction("UNDO", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                cv.put(NotesContract.Columns.STATUS, mNoteStatusFilter);
+                                cv.put(NoteContract.Columns.STATUS, mNoteStatusFilter);
                                 mContentResolver.update(uri, cv, null, null);
-                                mLoaderManager.restartLoader(LOADER_ID, null, mCallback);
+                                mLoaderManager.restartLoader(NOTE_LOADER_ID, null, noteLoader);
                             }
                         }).show();
 
@@ -173,10 +182,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        //Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
-        mLoaderManager.restartLoader(mLoaderId, null, this);
-
-
+        Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
+        mLoaderManager.restartLoader(LABEL_LOADER_ID, null, labelLoader);
+        mLoaderManager.restartLoader(mLoaderId, null, noteLoader);
     }
 
     @Override
@@ -201,7 +209,9 @@ public class MainActivity extends AppCompatActivity implements
         if (id == R.id.action_settings) {
             return true;
         }else if(id == R.id.action_label){
-            new LabelDialog(mContext);
+
+            mLoaderManager.restartLoader(LABEL_LOADER_ID, null, labelLoader);
+            new LabelDialog(mContext, mLabels);
         }
 
         return super.onOptionsItemSelected(item);
@@ -213,16 +223,16 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == R.id.nav_status_active) {
-            mNoteStatusFilter = AppConstants.NOTE_STATUS_ACTIVE;
+            mNoteStatusFilter = AppConstant.NOTE_STATUS_ACTIVE;
             mLoaderId = NOTE_LOADER_ID;
             this.setTitle("Notes");
         } else if (id == R.id.nav_status_archive) {
-            mNoteStatusFilter = AppConstants.NOTE_STATUS_ARCHIVED;
+            mNoteStatusFilter = AppConstant.NOTE_STATUS_ARCHIVED;
             mLoaderId = ARCHIVE_LOADER_ID;
             this.setTitle("Archive");
 
         } else if (id == R.id.nav_status_deleted) {
-            mNoteStatusFilter = AppConstants.NOTE_STATUS_DELETED;
+            mNoteStatusFilter = AppConstant.NOTE_STATUS_DELETED;
             mLoaderId = DELETED_LOADER_ID;
             this.setTitle("Deleted");
 
@@ -234,48 +244,72 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
-        mLoaderManager.restartLoader(mLoaderId, null, mCallback);
+        mLoaderManager.restartLoader(mLoaderId, null, noteLoader);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        //Log.d(LOG_TAG, "+++ MAIN ACIVITY LOADER CREATE CALLED");
-        //mContentResolver = this.getContentResolver();
-        String selection = NotesContract.Columns.STATUS + "=" + String.valueOf(mNoteStatusFilter);
-        CursorLoader cursorLoader = new CursorLoader(this, NotesContract.URI_TABLE, null, selection, null, null);
-        return cursorLoader;
-        //return new NotesLoader(this, mNoteStatusFilter, mContentResolver, mFilterText);
-    }
+    private class NoteLoader implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mCursor = cursor;
-        TextView emptyList = (TextView) findViewById(R.id.tv_add_note);
-        if(cursor != null) {
-            mNotesAdapter.reloadNotesData(mCursor);
-            emptyList.setVisibility(View.GONE);
-        }else {
-            emptyList.setVisibility(View.VISIBLE);
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            String selection = NoteContract.Columns.STATUS + "=" + String.valueOf(mNoteStatusFilter);
+            return new CursorLoader(MainActivity.this, NoteContract.URI_TABLE, null, selection, null, null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            mCursor = cursor;
+            TextView emptyList = (TextView) findViewById(R.id.tv_add_note);
+            if(cursor.getCount() ==0) {
+                sMNoteAdapter.reloadNotesData(mCursor);
+                emptyList.setVisibility(View.GONE);
+            }else {
+                emptyList.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            sMNoteAdapter.reloadNotesData(null);
         }
     }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mNotesAdapter.reloadNotesData(null);
+    private class LabelLoader implements LoaderManager.LoaderCallbacks<Cursor>{
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(MainActivity.this, LabelContract.URI_TABLE, null, null, null, null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            if(cursor.getCount() == 0) return;
+            mLabels.clear();
+            cursor.moveToFirst();
+            do {
+                mLabels.add(new Label(cursor));
+            }while(cursor.moveToNext());
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mLabels.clear();
+        }
     }
+
+
 
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
-        intent.putExtra(AppConstants.NOTE_INTENT_ACTION, AppConstants.NOTE_INTENT_UPDATE);
-        Uri uri = NotesContract.Notes.buildNoteUri(String.valueOf(view.getTag()));
+        intent.putExtra(AppConstant.NOTE_INTENT_ACTION, AppConstant.NOTE_INTENT_UPDATE);
+        Uri uri = NoteContract.Notes.buildNoteUri(String.valueOf(view.getTag()));
         Cursor cursor = mContentResolver.query(uri,null,null,null,null);
         Note note = new Note(cursor);
-        intent.putExtra(AppConstants.NOTE_INTENT_OBJECT, note);
+        intent.putExtra(AppConstant.NOTE_INTENT_OBJECT, note);
         startActivity(intent);
     }
 

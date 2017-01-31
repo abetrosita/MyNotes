@@ -6,10 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 
-/**
- * Created by AbetRosita on 1/20/2017.
- */
-
 public class LabelRecyclerView extends RecyclerView{
     Cursor mLabels;
     RecyclerView mView;

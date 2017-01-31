@@ -16,6 +16,7 @@ public class Label implements Serializable{
     private String mColor;
     private int mPosition;
     private boolean mNew;
+    private boolean mChecked = false;
 
     private static final long serialVersionUID = 2L;
 
@@ -55,6 +56,14 @@ public class Label implements Serializable{
 
     public int getId() {
         return mId;
+    }
+
+    public void setChecked(boolean isChecked){
+        mChecked = isChecked;
+    }
+
+    public boolean isChecked(){
+        return mChecked;
     }
 
     public void setId(int id) {

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,9 +43,14 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
     @Override
     public void onBindViewHolder(LabelViewHolder holder, int position) {
         if (mLabels ==null) return;
+        int labelId = mLabels.get(position).getId();
         holder.label.setText(mLabels.get(position).getName());
-        holder.label.setTag(mLabels.get(position).getId());
+        holder.label.setTag(labelId);
         holder.ivDeleteLabel.setTag(position);
+        //holder.chkLabel.setTag("chk_" + String.valueOf(labelId));
+        holder.chkLabel.setChecked(mLabels.get(position).isChecked());
+        holder.chkLabel.setTag(position);
+
     }
 
     @Override
@@ -55,14 +61,19 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.LabelViewHol
     public class LabelViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView label;
         ImageView ivDeleteLabel;
+        CheckBox chkLabel;
         public LabelViewHolder(View itemView) {
             super(itemView);
             label = (TextView) itemView.findViewById(R.id.tv_note_label);
+            chkLabel = (CheckBox) itemView.findViewById(R.id.chk_dialog_label);
             ivDeleteLabel = (ImageView) itemView.findViewById(R.id.iv_delete_label);
             ivDeleteLabel.setVisibility(View.GONE);
             label.setOnClickListener(this);
             ivDeleteLabel.setOnClickListener(this);
+            chkLabel.setOnClickListener(this);
         }
+
+
 
         @Override
         public void onClick(View v) {

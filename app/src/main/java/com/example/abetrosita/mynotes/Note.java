@@ -109,8 +109,15 @@ public class Note implements Serializable {
         return new ArrayList<>(Arrays.asList(mLabel.split("#,#")));
     }
 
-    public void setLabel(List<String> labels){
-        mLabel = TextUtils.join("#,#", labels);
+    public List<String> getLabelIds(){
+        if(mLabel.length() > 0 ){
+            return Arrays.asList(mLabel.split(","));
+        }
+        return null;
+    }
+
+    public void setLabel(String[] labelIds){
+        mLabel = TextUtils.join(",", labelIds);
     }
 
     public int getId() {

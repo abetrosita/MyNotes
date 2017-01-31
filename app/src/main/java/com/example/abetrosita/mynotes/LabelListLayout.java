@@ -5,57 +5,67 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 public class LabelListLayout extends FlowLayout {
     private Context mContext;
-    private List<String> mLabels;
+    public static List<String> mLabelIds;
+    private List<Label> labelList;
     private LayoutInflater mInflater;
 
     public LabelListLayout(Context context, List<String> labels) {
         super(context);
 
         mContext = context;
-        mLabels = labels;
+        mLabelIds = labels;
         mInflater = LayoutInflater.from(mContext);
+        labelList = MainActivity.mLabels;
 
         removeAllViews();
-        loadListItems();
+        loadLabelListItems();
 
     }
 
-    public LabelListLayout(Context context, List<String> labels, boolean labelClickable) {
+    public LabelListLayout(Context context, final List<String> labels, boolean labelClickable) {
         this(context, labels);
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "ADD/EDIT LABEL HERE", Toast.LENGTH_SHORT).show();
+
+                if(labels != null){
+                    for(Label label : labelList){
+                        boolean inList = labels.contains(String.valueOf(label.getId()));
+                        label.setChecked(inList);
+                    }
+                }
+
+                new LabelDialog(mContext, labelList);
             }
         });
     }
 
 
-    public void loadListItems(){
+    public void loadLabelListItems(){
         View mContainer;
         ImageView imageLabelIcon = new ImageView(mContext);
         imageLabelIcon.setImageResource(R.drawable.ic_note_label);
         addView(imageLabelIcon);
 
-        if(mLabels == null){
+        if(mLabelIds == null){
             TextView addLabelTextView = new TextView(mContext);
             addLabelTextView.setText(R.string.add_label_text);
             addView(addLabelTextView);
             return;
         }
-        for(String label : mLabels) {
-            mContainer = mInflater.inflate(R.layout.note_label_item, null, false);
-            final TextView mTextView = (TextView) mContainer.findViewById(R.id.tv_note_label_item);
-            mTextView.setText(label);
-            addView(mContainer);
+
+        for(Label label : labelList){
+            if(mLabelIds.contains(String.valueOf(label.getId()))){
+                mContainer = mInflater.inflate(R.layout.note_label_item, null, false);
+                TextView mTextView = (TextView) mContainer.findViewById(R.id.tv_note_label_item);
+                mTextView.setText(label.getName());
+                addView(mContainer);
+            }
         }
     }
-    
-    
 }

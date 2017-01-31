@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,21 +26,19 @@ import java.util.Locale;
 
 import static com.example.abetrosita.mynotes.AppConstant.LABEL_IS_CLICKABLE;
 
-/**
- * Created by AbetRosita on 1/14/2017.
- */
 
 public class NoteDetailActivity extends AppCompatActivity {
 
-    FlowLayout mFlowLayoutLabel;
+    public static FlowLayout mFlowLayoutLabel;
     EditText mEditTextTitle;
     EditText mEditTextBody;
-    List<String> mLabels;
+    List<String> mLabelIds;
     ImageView mImageView;
     String mIntentAction;
     ContentValues mValues;
     String mImagePath;
     Note mNote;
+    static Context mContext;
 
     private static final int PICK_IMAGE = 1;
     private static final String LOG_TAG = NoteDetailActivity.class.getSimpleName();
@@ -52,11 +51,9 @@ public class NoteDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        final Context context = this;
         mImagePath = "";
-
+        mContext = this;
         mFlowLayoutLabel = (FlowLayout) findViewById(R.id.ll_note_labels);
-        mFlowLayoutLabel.removeAllViews();
         mEditTextTitle = (EditText) findViewById(R.id.et_note_title);
         mEditTextBody = (EditText) findViewById(R.id.et_note_body);
         //TODO: ADD LABELS TABLE TO CONTROL LABEL SELECTIONS
@@ -66,7 +63,7 @@ public class NoteDetailActivity extends AppCompatActivity {
         mImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
                 dialogBuilder.setTitle("Delete Image");
                 dialogBuilder.setMessage("Do you want to delete the selected image?");
                 dialogBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -96,13 +93,15 @@ public class NoteDetailActivity extends AppCompatActivity {
             mNote = (Note) getIntent().getSerializableExtra(AppConstant.NOTE_INTENT_OBJECT);
             mEditTextTitle.setText(mNote.getTitle());
             mEditTextBody.setText(mNote.getBody());
-            mLabels = mNote.getLabelList();
-            mFlowLayoutLabel.addView(new LabelListLayout(this, mLabels, LABEL_IS_CLICKABLE));
+            mLabelIds = mNote.getLabelIds();
+            loadFlowLabel(mLabelIds);
             mImagePath = mNote.getImagePath();
             if(mImagePath.length() > 0){
                 Picasso.with(getApplicationContext()).load(Uri.parse(mImagePath)).into(mImageView);
                 mImageView.setVisibility(View.VISIBLE);
             }
+        }else{
+            loadFlowLabel(null);
         }
 
         mEditTextBody.requestFocusFromTouch();
@@ -111,15 +110,22 @@ public class NoteDetailActivity extends AppCompatActivity {
 
     }
 
+    public static void loadFlowLabel(List<String> labelIds){
+        mFlowLayoutLabel.removeAllViews();
+        mFlowLayoutLabel.addView(new LabelListLayout(mContext, labelIds, LABEL_IS_CLICKABLE));
+    }
+
 
     @Override
     public void onBackPressed() {
         String title = mEditTextTitle.getText().toString();
         String body = mEditTextBody.getText().toString();
         String imagePath = AppConstant.NOTE_NO_IMAGE;
-
+        String labelIds = "";
+        if (LabelListLayout.mLabelIds != null) {
+            labelIds = TextUtils.join(",", LabelListLayout.mLabelIds);
+        }
         if(title.length() + body.length() == 0) {
-            //Toast.makeText(this, "Empty note not saved.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -128,6 +134,7 @@ public class NoteDetailActivity extends AppCompatActivity {
             case AppConstant.NOTE_INTENT_ADD:
                 Note note = new Note(title, body, imagePath);
                 mValues = note.getContentValues();
+                mValues.put(NoteContract.Columns.LABEL, labelIds);
                 mValues.put(NoteContract.Columns.IMAGE_PATH, mImagePath);
                 MainActivity.mContentResolver.insert(NoteContract.URI_TABLE, mValues);
                 break;
@@ -137,6 +144,7 @@ public class NoteDetailActivity extends AppCompatActivity {
                 //mNote.setLabel(label);
                 mNote.setDateModified(getDateTime());
                 mValues = mNote.getContentValues();
+                mValues.put(NoteContract.Columns.LABEL, labelIds);
                 mValues.put(NoteContract.Columns.IMAGE_PATH, mImagePath);
                 Log.d(LOG_TAG, "++++ ImagePath:" + mImagePath);
                 Uri uri = NoteContract.Notes.buildNoteUri(String.valueOf(mNote.getId()));

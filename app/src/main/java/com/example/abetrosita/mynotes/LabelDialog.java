@@ -3,9 +3,7 @@ package com.example.abetrosita.mynotes;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.net.Uri;
-import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +12,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,18 +26,15 @@ import static com.example.abetrosita.mynotes.MainActivity.mContentResolver;
 
 public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
 
-    private static final int LOADER_ID = 100;
-
-    private Cursor mCursor;
     private List<Label> mLabels;
     private LabelAdapter mLabelAdapter;
-    private LoaderManager.LoaderCallbacks mCallbacks;
-    LabelRecyclerView mLabelRecyclerView;
     private Context mContext;
     private View lastView;
     private List<Label> updatedLabel;
     private List<Label> deletedLabel;
     private List<Label> insertedLabel;
+
+    private RecyclerView recyclerView;
 
     View mView;
 
@@ -53,7 +49,7 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mView= inflater.inflate(R.layout.dialog_label, null);
 
-        RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.rv_note_dialog_label_list);
+        recyclerView = (RecyclerView) mView.findViewById(R.id.rv_note_dialog_label_list);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
@@ -74,7 +70,8 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
                 if(insertedLabel != null){
                     for(Label label : insertedLabel){
                         ContentValues values= label.getContentValues();
-                        mContentResolver.insert(LabelContract.URI_TABLE, values);
+                        Uri uri = mContentResolver.insert(LabelContract.URI_TABLE, values);
+                        mLabels.get(mLabels.indexOf(label)).setId(Integer.parseInt(uri.getLastPathSegment()));
                     }
                 }
 
@@ -85,6 +82,8 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
                         Log.d("LABEL_DELETED", uri.toString());
                     }
                 }
+
+                NoteDetailActivity.loadFlowLabel(getCheckedLabelIds());
 
             }
         });
@@ -187,7 +186,19 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
             mLabels.remove(pos);
             mLabelAdapter.notifyItemRemoved(pos);
             mLabelAdapter.notifyItemRangeChanged(pos, mLabels.size());
+        }else if(viewName.equals("chk_dialog_label")){
+            int pos = Integer.parseInt(view.getTag().toString());
+            CheckBox chk = (CheckBox) view;
+            mLabels.get(pos).setChecked(chk.isChecked());
         }
-
+    }
+    public List<String> getCheckedLabelIds(){
+        List<String> checkedLabels = new ArrayList<>();
+        for(Label label : mLabels){
+            if(label.isChecked()){
+                checkedLabels.add(String.valueOf(label.getId()));
+            }
+        }
+        return checkedLabels;
     }
 }

@@ -12,6 +12,7 @@
         android:src="@drawable/ic_reorder_horizontal"/>
 
     <CheckBox
+        android:id="@+id/chk_dialog_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

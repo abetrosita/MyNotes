@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -39,14 +40,11 @@ public class MainActivity extends AppCompatActivity implements
         NoteAdapter.NotesAdapterOnClickHandler{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private RecyclerView mNoteList;
-    private TextView mAddNote;
     private Toast mToast;
     private Cursor mCursor;
     private String mFilterText;
     private int mNoteStatusFilter;
     private static int mLoaderId = 1;
-    private static int mActiveLoaderId = 1;
 
     private LoaderManager.LoaderCallbacks noteLoader;
     private LoaderManager.LoaderCallbacks labelLoader;
@@ -73,10 +71,10 @@ public class MainActivity extends AppCompatActivity implements
 
         //TODO: Save preference to save state of status...
         mNoteStatusFilter = AppConstant.NOTE_STATUS_DEFAULT;
-        mAddNote = (TextView) findViewById(R.id.tv_add_normal_note);
-        mNoteList = (RecyclerView) findViewById(R.id.rv_notes);
-        mNoteList.setLayoutManager(layoutManager);
-        mNoteList.setHasFixedSize(false);
+        TextView addNote = (TextView) findViewById(R.id.tv_add_normal_note);
+        RecyclerView noteList = (RecyclerView) findViewById(R.id.rv_notes);
+        noteList.setLayoutManager(layoutManager);
+        noteList.setHasFixedSize(false);
         mContext = this;
         mFilterText = "";
         mLabels = new ArrayList<>();
@@ -85,12 +83,9 @@ public class MainActivity extends AppCompatActivity implements
 
         mContentResolver = this.getContentResolver();
         sMNoteAdapter = new NoteAdapter(null, this);
-        mNoteList.setAdapter(sMNoteAdapter);
+        noteList.setAdapter(sMNoteAdapter);
 
-        //mLoaderManager = getSupportLoaderManager();
-
-
-        mAddNote.setOnClickListener(new View.OnClickListener() {
+        addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
@@ -151,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
                         }).show();
 
            }
-        }).attachToRecyclerView(mNoteList);
+        }).attachToRecyclerView(noteList);
 
 
         //getSupportLoaderManager().initLoader(mLoaderId, null, noteLoader);
@@ -188,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
         Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
         getSupportLoaderManager().restartLoader(mLoaderId, null, noteLoader);
-//        getSupportLoaderManager().restartLoader(LABEL_LOADER_ID, null, labelLoader);
     }
 
     @Override
@@ -222,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.nav_status_active) {
@@ -317,6 +311,8 @@ public class MainActivity extends AppCompatActivity implements
         Uri uri = NoteContract.Notes.buildNoteUri(String.valueOf(view.getTag()));
         Cursor cursor = mContentResolver.query(uri,null,null,null,null);
         Note note = new Note(cursor);
+        cursor.close();
+        getSupportLoaderManager().restartLoader(LABEL_LOADER_ID, null, labelLoader);
         intent.putExtra(AppConstant.NOTE_INTENT_OBJECT, note);
         startActivity(intent);
     }

@@ -9,11 +9,8 @@ public class FlowLayout extends ViewGroup {
     private int line_height_space;
 
     public static class LayoutParams extends ViewGroup.LayoutParams {
-
         public int horizontal_spacing;
         public int vertical_spacing;
-
-
         public LayoutParams(int horizontal_spacing, int vertical_spacing) {
             super(0, 0);
             this.horizontal_spacing = horizontal_spacing;

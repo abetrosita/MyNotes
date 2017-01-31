@@ -13,8 +13,27 @@
 
     <CheckBox
         android:id="@+id/chk_dialog_label"
-        android:layout_width="wrap_content"
+        android:layout_width="36dp"
+        android:gravity="center_vertical"
         android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/iv_dialog_edit"
+        android:layout_width="36dp"
+        android:paddingTop="8dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_menu_edit"/>
+
+
+
+    <ImageView
+        android:id="@+id/iv_dialog_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:src="@drawable/ic_check_primary"/>
 
     <TextView
         android:id="@+id/tv_note_label"
@@ -27,7 +46,7 @@
         android:textColor="?attr/textColorAlertDialogListItem"/>
 
     <ImageView
-        android:id="@+id/iv_delete_label"
+        android:id="@+id/iv_dialog_delete"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:layout_width="wrap_content"

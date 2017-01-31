@@ -40,7 +40,7 @@ public class LabelListLayout extends FlowLayout {
                     }
                 }
 
-                new LabelDialog(mContext, labelList);
+                new LabelDialog(mContext, labelList, AppConstant.NOTE_CALLER_DETAIL);
             }
         });
     }

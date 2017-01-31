@@ -17,7 +17,6 @@
 
         <ImageView
             android:id="@+id/iv_add_label"
-            android:layout_marginLeft="15dp"
             android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -32,6 +31,7 @@
         <EditText
             android:id="@+id/et_add_label"
             android:layout_width="0dp"
+            android:layout_marginLeft="10dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Add a label..."

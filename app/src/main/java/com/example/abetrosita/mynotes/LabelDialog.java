@@ -38,10 +38,10 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
 
     View mView;
 
-    public LabelDialog(Context context, List<Label> labels) {
+    public LabelDialog(Context context, List<Label> labels, int caller) {
         mContext = context;
         mLabels = labels;
-        mLabelAdapter = new LabelAdapter(mLabels, this);
+        mLabelAdapter = new LabelAdapter(mLabels, this, caller);
         updatedLabel = new ArrayList<>();
         deletedLabel = new ArrayList<>();
         insertedLabel = new ArrayList<>();
@@ -101,7 +101,6 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
     private void setUpAddLabelAction(){
         final EditText etAddLabel = (EditText) mView.findViewById(R.id.et_add_label);
         final ImageView ivAccept = (ImageView) mView.findViewById(R.id.iv_accept_label);
-        ImageView ivAddLabel = (ImageView) mView.findViewById(R.id.iv_add_label);
 
         etAddLabel.addTextChangedListener(new TextWatcher() {
             @Override
@@ -172,7 +171,7 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
                 }
                 lastView = deleteView;
             }
-        }else if(viewName.equals("iv_delete_label")){
+        }else if(viewName.equals("iv_dialog_delete")){
             int pos = Integer.parseInt(deleteView.getTag().toString());
             if(!mLabels.get(pos).isNew()){
                 deletedLabel.add(mLabels.get(pos));

@@ -34,7 +34,6 @@ public class Label implements Serializable{
     }
 
     public Label(Cursor cursor){
-        //cursor.moveToFirst();
         mId =  cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
         mName =  cursor.getString(cursor.getColumnIndex(LabelContract.Columns.LABEL_NAME));
         mColor =  cursor.getString(cursor.getColumnIndex(LabelContract.Columns.LABEL_COLOR));

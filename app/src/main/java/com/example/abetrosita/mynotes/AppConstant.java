@@ -30,6 +30,9 @@ public class AppConstant {
     public static final int NOTE_LABEL_SMALL = 1;
     public static final int NOTE_LABEL_NORMAL = 2;
 
+    public static final int NOTE_CALLER_MAIN = 1;
+    public static final int NOTE_CALLER_DETAIL =2;
+
     public static final String NOTE_INTENT_OBJECT = "note_intent_transfer";
     public static final String NOTE_INTENT_ACTION = "note_intent_action";
     public static final String NOTE_INTENT_ADD = "note_intent_add";

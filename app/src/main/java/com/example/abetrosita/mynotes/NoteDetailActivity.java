@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,8 +55,6 @@ public class NoteDetailActivity extends AppCompatActivity {
         mFlowLayoutLabel = (FlowLayout) findViewById(R.id.ll_note_labels);
         mEditTextTitle = (EditText) findViewById(R.id.et_note_title);
         mEditTextBody = (EditText) findViewById(R.id.et_note_body);
-        //TODO: ADD LABELS TABLE TO CONTROL LABEL SELECTIONS
-        //mTextViewLabel = (EditText) findViewById(R.id.et_note_label);
 
         mImageView = (ImageView) findViewById(R.id.detail_image);
         mImageView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -141,12 +138,11 @@ public class NoteDetailActivity extends AppCompatActivity {
             case AppConstant.NOTE_INTENT_UPDATE:
                 mNote.setTitle(title);
                 mNote.setBody(body);
-                //mNote.setLabel(label);
                 mNote.setDateModified(getDateTime());
                 mValues = mNote.getContentValues();
                 mValues.put(NoteContract.Columns.LABEL, labelIds);
                 mValues.put(NoteContract.Columns.IMAGE_PATH, mImagePath);
-                Log.d(LOG_TAG, "++++ ImagePath:" + mImagePath);
+                //Log.d(LOG_TAG, "++++ ImagePath:" + mImagePath);
                 Uri uri = NoteContract.Notes.buildNoteUri(String.valueOf(mNote.getId()));
                 MainActivity.mContentResolver.update(uri, mValues, null, null);
                 break;

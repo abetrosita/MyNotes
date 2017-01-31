@@ -88,7 +88,6 @@ public class AppProvider extends ContentProvider {
                 queryBuilder.appendWhere(NoteContract.Columns.LABEL +"="+lastPath);
                 break;
             case LABELS:
-                //Log.d("LOG_VALUES", "+++ LOADER CALLED LABEL QUERY+++");
                 queryBuilder.setTables(AppDatabase.Tables.LABELS);
                 break;
             case LABEL_ID:
@@ -134,14 +133,14 @@ public class AppProvider extends ContentProvider {
                 if(recordId > 0){
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
-                Log.d(LOG_TAG, "NOTE ADDED");
+                //Log.d(LOG_TAG, "NOTE ADDED");
                 return NoteContract.Notes.buildNoteUri(String.valueOf(recordId));
             case LABELS:
                 recordId = db.insertOrThrow(AppDatabase.Tables.LABELS, null, values);
                 if(recordId > 0){
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
-                Log.d(LOG_TAG, "LABEL ADDED");
+                //Log.d(LOG_TAG, "LABEL ADDED");
                 return NoteContract.Notes.buildNoteUri(String.valueOf(recordId));
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -177,10 +176,7 @@ public class AppProvider extends ContentProvider {
                 selectionCriteria = BaseColumns._ID + "=" + id +
                         (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
                 numRowsDeleted = db.delete(AppDatabase.Tables.LABELS, selectionCriteria, selectionArgs);
-//                if (numRowsDeleted != 0) {
-//                    getContext().getContentResolver().notifyChange(LabelContract.URI_TABLE, null);
-//                }
-                Log.d(LOG_TAG, "LABEL ID DELETED: " + numRowsDeleted);
+                //Log.d(LOG_TAG, "LABEL ID DELETED: " + numRowsDeleted);
                 return numRowsDeleted;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);

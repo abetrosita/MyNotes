@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }else if(id == R.id.action_label){
             getSupportLoaderManager().restartLoader(LABEL_LOADER_ID, null, labelLoader);
-            new LabelDialog(mContext, mLabels);
+            new LabelDialog(mContext, mLabels, AppConstant.NOTE_CALLER_MAIN);
         }
 
         return super.onOptionsItemSelected(item);

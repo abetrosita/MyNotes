@@ -176,7 +176,6 @@ public class AppProvider extends ContentProvider {
                 selectionCriteria = BaseColumns._ID + "=" + id +
                         (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
                 numRowsDeleted = db.delete(AppDatabase.Tables.LABELS, selectionCriteria, selectionArgs);
-                //Log.d(LOG_TAG, "LABEL ID DELETED: " + numRowsDeleted);
                 return numRowsDeleted;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);

@@ -13,6 +13,8 @@ public class AppConstant {
     public static final String NOTE_URI_SEGMENT_STATUS = "status";
     public static final String NOTE_URI_SEGMENT_LABEL = "label";
 
+    public static boolean ON_EDIT_MODE = false;
+
     public static final int NOTE_TYPE_DEFAULT = 1;
     public static final int NOTE_TYPE_NORMAL = 1;
     public static final int NOTE_TYPE_LIST = 2;
@@ -32,6 +34,8 @@ public class AppConstant {
 
     public static final int NOTE_CALLER_MAIN = 1;
     public static final int NOTE_CALLER_DETAIL =2;
+    public static final int NOTE_CALLER_EDIT = 3;
+    public static final int NOTE_CALLER_BACK = 4;
 
     public static final String NOTE_INTENT_OBJECT = "note_intent_transfer";
     public static final String NOTE_INTENT_ACTION = "note_intent_action";

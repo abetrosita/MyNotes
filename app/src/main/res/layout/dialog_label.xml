@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,19 +8,27 @@
     android:windowSoftInputMode="adjustPan|adjustResize">
 
     <LinearLayout
-        android:id="@+id/ll_new_label"
+        android:id="@+id/ll_add_label"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/iv_back"
+            android:padding="8dp"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_back"/>
+
+        <ImageView
             android:id="@+id/iv_add_label"
-            android:padding="5dp"
-            android:layout_width="wrap_content"
+            android:padding="8dp"
+            android:layout_width="36dp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_label_add"/>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp">
@@ -31,7 +39,6 @@
         <EditText
             android:id="@+id/et_add_label"
             android:layout_width="0dp"
-            android:layout_marginLeft="10dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Add a label..."
@@ -49,10 +56,39 @@
             android:src="@drawable/ic_check_primary"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_edit_label"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_dialog_edit"
+            android:layout_width="36dp"
+            android:paddingTop="8dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_menu_edit"
+            android:tag="labelEdit"/>
+
+        <TextView
+            android:id="@+id/tv_add_label"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="12dp"
+            android:paddingTop="2dp"
+            android:text="Edit Labels"
+            android:gravity="center_vertical"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ll_new_label">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_note_dialog_label_list"
@@ -66,4 +102,4 @@
 
 
 
-</RelativeLayout>
+</LinearLayout>

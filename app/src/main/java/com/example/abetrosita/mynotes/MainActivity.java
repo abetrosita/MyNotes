@@ -148,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements
            }
         }).attachToRecyclerView(noteList);
 
-
-        //getSupportLoaderManager().initLoader(mLoaderId, null, noteLoader);
         getSupportLoaderManager().initLoader(LABEL_LOADER_ID, null, labelLoader);
 
         final int REQUEST_CODE_ASK_PERMISSIONS = 555;
@@ -181,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
+        //Log.d(LOG_TAG, "+++ MAIN ACIVITY ON RESUME CALLED");
         getSupportLoaderManager().restartLoader(mLoaderId, null, noteLoader);
     }
 
@@ -252,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            Log.d(LOG_TAG, "NOTE ON CREATE LOADER CALLED");
+            //Log.d(LOG_TAG, "NOTE ON CREATE LOADER CALLED");
             String selection = NoteContract.Columns.STATUS + "=" + String.valueOf(mNoteStatusFilter);
             return new CursorLoader(MainActivity.this, NoteContract.URI_TABLE, null, selection, null, null);
         }
@@ -260,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
             mCursor = cursor;
-            Log.d(LOG_TAG, "NOTE ON LOAD FINISHED CALLED: " + String.valueOf(cursor.getCount()));
+            //Log.d(LOG_TAG, "NOTE ON LOAD FINISHED CALLED: " + String.valueOf(cursor.getCount()));
             TextView emptyList = (TextView) findViewById(R.id.tv_add_note);
             if(cursor.getCount() > 0) {
                 emptyList.setVisibility(View.GONE);

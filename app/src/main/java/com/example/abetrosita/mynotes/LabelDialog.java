@@ -15,16 +15,20 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static com.example.abetrosita.mynotes.AppConstant.ON_EDIT_MODE;
 import static com.example.abetrosita.mynotes.MainActivity.mContentResolver;
 
 
-public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
+public class LabelDialog implements LabelViewHolder.LabelOnClickHandler{
 
     private List<Label> mLabels;
     private LabelAdapter mLabelAdapter;
@@ -33,29 +37,34 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
     private List<Label> updatedLabel;
     private List<Label> deletedLabel;
     private List<Label> insertedLabel;
+    private int lastPosition = -1;
+    private LabelViewHolder lastHolder;
+    private LinearLayout llEditLabel;
+    private LinearLayout llNewLabel;
+    private int mCaller;
 
     private RecyclerView recyclerView;
 
     View mView;
 
-    public LabelDialog(Context context, List<Label> labels, int caller) {
+    public LabelDialog(Context context, List<Label> labels, int caller){
         mContext = context;
         mLabels = labels;
-        mLabelAdapter = new LabelAdapter(mLabels, this, caller);
+        mCaller = caller;
+        mLabelAdapter = new LabelAdapter(mLabels, caller, this);
         updatedLabel = new ArrayList<>();
         deletedLabel = new ArrayList<>();
         insertedLabel = new ArrayList<>();
+        lastHolder = null;
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mView= inflater.inflate(R.layout.dialog_label, null);
 
         recyclerView = (RecyclerView) mView.findViewById(R.id.rv_note_dialog_label_list);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(mLabelAdapter);
 
-        lastView = null;
         showDialog();
     }
 
@@ -100,7 +109,25 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
 
     private void setUpAddLabelAction(){
         final EditText etAddLabel = (EditText) mView.findViewById(R.id.et_add_label);
+        final TextView tvEditLabel = (TextView) mView.findViewById(R.id.tv_add_label);
         final ImageView ivAccept = (ImageView) mView.findViewById(R.id.iv_accept_label);
+        final ImageView ivEdit = (ImageView) mView.findViewById(R.id.iv_dialog_edit);
+        final ImageView ivBack = (ImageView) mView.findViewById(R.id.iv_back);
+        final ImageView ivAddLabel = (ImageView) mView.findViewById(R.id.iv_add_label);
+        llNewLabel = (LinearLayout) mView.findViewById(R.id.ll_add_label);
+        llEditLabel = (LinearLayout) mView.findViewById(R.id.ll_edit_label);
+
+        if(mCaller == AppConstant.NOTE_CALLER_MAIN){
+            llEditLabel.setVisibility(VISIBLE);
+            llNewLabel.setVisibility(GONE);
+            ivAddLabel.setVisibility(GONE);
+            ivBack.setVisibility(VISIBLE);
+        }else{
+            llEditLabel.setVisibility(GONE);
+            llNewLabel.setVisibility(VISIBLE);
+            ivAddLabel.setVisibility(VISIBLE);
+            ivBack.setVisibility(GONE);
+        }
 
         etAddLabel.addTextChangedListener(new TextWatcher() {
             @Override
@@ -110,7 +137,7 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(count>0){
-                    ivAccept.setVisibility(View.VISIBLE);
+                    ivAccept.setVisibility(VISIBLE);
                  }else {
                     ivAccept.setVisibility(View.GONE);
                 }
@@ -140,6 +167,42 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
             }
         });
 
+        ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llEditLabel.setVisibility(GONE);
+                llNewLabel.setVisibility(VISIBLE);
+                ON_EDIT_MODE = true;
+                mLabelAdapter.setCaller(AppConstant.NOTE_CALLER_EDIT);
+                mLabelAdapter.notifyDataSetChanged();
+            }
+        });
+
+        tvEditLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llEditLabel.setVisibility(GONE);
+                llNewLabel.setVisibility(VISIBLE);
+                ON_EDIT_MODE = true;
+                mLabelAdapter.setCaller(AppConstant.NOTE_CALLER_EDIT);
+                mLabelAdapter.notifyDataSetChanged();
+            }
+        });
+
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llEditLabel.setVisibility(VISIBLE);
+                llNewLabel.setVisibility(View.GONE);
+                ON_EDIT_MODE = false;
+                if(lastHolder != null) {
+                    lastHolder.resetMainLabelViews();
+                }
+                mLabelAdapter.setCaller(AppConstant.NOTE_CALLER_BACK);
+                mLabelAdapter.notifyDataSetChanged();
+            }
+        });
+
     }
 
     private boolean isLabelNameExists(String labelName){
@@ -152,45 +215,6 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
         return exists;
     }
 
-    @Override
-    public void onClick(View view, View deleteView) {
-        String viewName = String.valueOf(mContext.getResources().getResourceEntryName(view.getId()));
-        int id = Integer.parseInt(view.getTag().toString());
-
-        if(viewName.equals("tv_note_label")){
-            if (deleteView == lastView) {
-                if(deleteView.getVisibility() == GONE){
-                    deleteView.setVisibility(View.VISIBLE);
-                }else {
-                    deleteView.setVisibility(GONE);
-                }
-            } else {
-                deleteView.setVisibility(View.VISIBLE);
-                if (lastView != null) {
-                    lastView.setVisibility(GONE);
-                }
-                lastView = deleteView;
-            }
-        }else if(viewName.equals("iv_dialog_delete")){
-            int pos = Integer.parseInt(deleteView.getTag().toString());
-            if(!mLabels.get(pos).isNew()){
-                deletedLabel.add(mLabels.get(pos));
-            }else{
-                for(Label label : insertedLabel){
-                    if(label.getName().equals(mLabels.get(pos).getName())){
-                        insertedLabel.remove(label);
-                    }
-                }
-            }
-            mLabels.remove(pos);
-            mLabelAdapter.notifyItemRemoved(pos);
-            mLabelAdapter.notifyItemRangeChanged(pos, mLabels.size());
-        }else if(viewName.equals("chk_dialog_label")){
-            int pos = Integer.parseInt(view.getTag().toString());
-            CheckBox chk = (CheckBox) view;
-            mLabels.get(pos).setChecked(chk.isChecked());
-        }
-    }
     public List<String> getCheckedLabelIds(){
         List<String> checkedLabels = new ArrayList<>();
         for(Label label : mLabels){
@@ -199,5 +223,42 @@ public class LabelDialog implements LabelAdapter.LabelOnClickHandler{
             }
         }
         return checkedLabels;
+    }
+
+    @Override
+    public void onClick(LabelViewHolder holder, String viewTag) {
+        int position = holder.getAdapterPosition();
+        if(!ON_EDIT_MODE && viewTag.equals("labelName")){
+            Log.d("LOG_HOLDER", "Ready to filter by tags");
+            return;
+        }
+
+        if(position != lastPosition && lastHolder != null){
+            lastHolder.resetMainLabelViews();
+        }
+
+        switch (viewTag){
+            case "labelDelete":
+                //TODO: Add prompt to confirm if to proceed deleting tag.
+                if(!mLabels.get(position).isNew()){
+                    deletedLabel.add(mLabels.get(position));
+                }else{
+                    for(Label label : insertedLabel){
+                        if(label.getName().equals(mLabels.get(position).getName())){
+                            insertedLabel.remove(label);
+                        }
+                    }
+                }
+                mLabels.remove(position);
+                mLabelAdapter.notifyItemRemoved(position);
+                mLabelAdapter.notifyItemRangeChanged(position, mLabels.size());
+                break;
+            case "checkBox":
+                CheckBox chk =  holder.chkLabel;
+                mLabels.get(position).setChecked(chk.isChecked());
+        }
+
+        lastPosition = holder.getAdapterPosition();
+        lastHolder = holder;
     }
 }

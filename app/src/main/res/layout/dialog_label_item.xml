@@ -2,55 +2,94 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:padding="2dp"
+              android:tag="labelLayout"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="36dp">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:id="@+id/label_move_handle"
+        android:layout_width="24dp"
         android:padding="3dp"
         android:layout_height="match_parent"
         android:src="@drawable/ic_reorder_horizontal"/>
+
+    <ImageView
+        android:id="@+id/ic_note_label"
+        android:layout_width="36dp"
+        android:padding="5dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_note_label"/>
 
     <CheckBox
         android:id="@+id/chk_dialog_label"
         android:layout_width="36dp"
         android:gravity="center_vertical"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:tag="checkBox"/>
 
     <ImageView
         android:id="@+id/iv_dialog_edit"
         android:layout_width="36dp"
-        android:paddingTop="8dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="2dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_menu_edit"/>
+        android:src="@drawable/ic_menu_edit"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:tag="labelEdit"/>
 
 
 
     <ImageView
         android:id="@+id/iv_dialog_accept"
-        android:layout_width="wrap_content"
+        android:layout_width="36dp"
         android:layout_height="match_parent"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:src="@drawable/ic_check_primary"/>
-
-    <TextView
-        android:id="@+id/tv_note_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="5dp"
-        android:text="#LABEL"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_gravity="center_vertical"
         android:foreground="?android:attr/selectableItemBackground"
-        android:textColor="?attr/textColorAlertDialogListItem"/>
+        android:src="@drawable/ic_check_primary"
+        android:tag="labelAccept"/>
+
+    <ViewSwitcher
+        android:id="@+id/label_switcher"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/tv_note_label"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:tag="labelName"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textSize="14sp"
+            android:textColor="?attr/textColorAlertDialogListItem"
+            android:text="#Label" />
+
+        <EditText
+            android:id="@+id/hidden_edit_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="editLabel"
+            android:paddingTop="6dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textSize="14sp"
+            android:background="@null"
+            android:textColor="?attr/textColorAlertDialogListItem"/>
+    </ViewSwitcher>
 
     <ImageView
         android:id="@+id/iv_dialog_delete"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_width="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_width="36dp"
         android:layout_height="match_parent"
+        android:tag="labelDelete"
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/ic_menu_deleted_colored"/>
 
